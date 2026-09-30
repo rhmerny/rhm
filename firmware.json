@@ -1,0 +1,6 @@
+{
+  "target": "14.00",
+  "mode": "legacy-browser-host",
+  "modules": [],
+  "success_requires_verified_result": true
+}
