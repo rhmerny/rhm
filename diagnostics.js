@@ -21,7 +21,7 @@ export function detectEnvironment() {
 
 export function targetCheck(env) {
   return {
-    exact: env.firmware === "13.52",
+    exact: env.firmware === "14.00",
     firmware: env.firmware || "unknown"
   };
 }

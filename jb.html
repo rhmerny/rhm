@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ZOOF13R // BO2 RTM TOOL & HOST</title>
+<title>RHM ERNY // BO2 RTM TOOL & HOST</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700;900&family=Consolas:wght@400;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
@@ -338,7 +338,431 @@ html, body {
   font-style: normal !important;
 }
 
+
+/* ===== RHM ERNY CLEAN SHADOW DRAGON UI OVERRIDE ===== */
+:root{
+  --bg-dark:#08050d;
+  --bg-base:#0d0913;
+  --sidebar-bg:rgba(10,7,16,.94);
+  --card-bg:rgba(20,14,29,.96);
+  --border-color:rgba(203,137,255,.18);
+  --text-main:#f8f4ff;
+  --text-dim:#b7adbf;
+  --theme-accent:#bd70ff;
+  --purple:#b85cff;
+  --purple2:#7b32d7;
+  --purple-soft:rgba(184,92,255,.14);
+}
+
+html,body{
+  min-height:100vh!important;
+  background:
+    linear-gradient(180deg,rgba(5,2,10,.66),rgba(7,3,12,.84)),
+    url('rhm-erny-bg.png') center center / cover fixed no-repeat!important;
+  color:var(--text-main)!important;
+}
+
+body:before{
+  content:"";position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(circle at 50% 30%,rgba(178,80,255,.12),transparent 42%),linear-gradient(90deg,rgba(3,1,7,.32),transparent 35%,transparent 65%,rgba(3,1,7,.38));
+}
+
+#fx-canvas{opacity:.06!important;z-index:2!important}
+#lightning-flash{z-index:3!important}
+
+#app-base{
+  z-index:10!important;
+  width:min(1460px,calc(100vw - 36px))!important;
+  min-height:calc(100vh - 36px)!important;
+  margin:18px auto!important;
+  padding:1px!important;
+  border-radius:22px!important;
+  background:linear-gradient(135deg,rgba(221,164,255,.55),rgba(126,47,211,.34),rgba(255,255,255,.08))!important;
+  box-shadow:0 30px 90px rgba(0,0,0,.72),0 0 45px rgba(155,69,232,.14)!important;
+  animation:none!important;
+}
+
+#app-base-inner{
+  min-height:calc(100vh - 38px)!important;
+  background:rgba(8,5,13,.94)!important;
+  border:1px solid rgba(255,255,255,.055)!important;
+  border-radius:21px!important;
+  backdrop-filter:blur(18px)!important;
+}
+
+#top-bar{
+  height:76px!important;min-height:76px!important;
+  padding:0 26px!important;
+  background:rgba(10,7,16,.96)!important;
+  border-bottom:1px solid rgba(202,136,255,.16)!important;
+}
+
+.brand-left,.brand-center,.header-title,.orange-subheader,.p-title,.status-badge,.rgb-text{
+  background:none!important;
+  background-image:none!important;
+  -webkit-background-clip:initial!important;
+  -webkit-text-fill-color:initial!important;
+  animation:none!important;
+  color:var(--text-main)!important;
+}
+
+.brand-left{
+  font-family:'Segoe UI',system-ui,sans-serif!important;
+  font-size:20px!important;font-style:normal!important;font-weight:900!important;
+  letter-spacing:.12em!important;
+}
+.brand-center{
+  font-family:'Segoe UI',system-ui,sans-serif!important;
+  font-size:16px!important;font-style:normal!important;font-weight:800!important;
+  letter-spacing:.22em!important;color:#c99bff!important;
+}
+.status-badge{
+  color:#d9b7ff!important;font:800 11px Consolas,monospace!important;
+  letter-spacing:.08em!important;
+  padding:8px 12px!important;border-radius:999px!important;
+  border:1px solid rgba(194,113,255,.24)!important;
+  background:rgba(170,82,255,.08)!important;
+}
+
+.star{
+  color:#d38bff!important;-webkit-text-fill-color:#d38bff!important;
+  text-shadow:0 0 10px rgba(195,100,255,.5)!important;
+  animation:none!important;transform:none!important;
+}
+
+#body-layout{min-height:0!important}
+#sidebar{
+  width:225px!important;
+  padding:16px 10px!important;
+  gap:5px!important;
+  background:rgba(9,6,14,.97)!important;
+  border-right:1px solid rgba(207,141,255,.12)!important;
+}
+#sidebar:before{
+  content:'RHM ERNY  /  CONTROL';
+  display:block;color:#75657f;font:800 9px Consolas,monospace;letter-spacing:.16em;
+  padding:5px 13px 12px;
+}
+.nav-btn{
+  position:relative!important;
+  min-height:48px!important;
+  padding:12px 14px!important;
+  border:1px solid transparent!important;
+  border-left:2px solid transparent!important;
+  border-radius:10px!important;
+  background:transparent!important;
+  color:#a9a0b0!important;
+  font-size:12px!important;font-weight:750!important;
+  letter-spacing:.02em!important;
+}
+.nav-btn:hover{background:rgba(184,92,255,.07)!important;color:#f6efff!important;border-color:rgba(184,92,255,.12)!important}
+.nav-btn.active{
+  background:linear-gradient(90deg,rgba(184,92,255,.15),rgba(184,92,255,.035))!important;
+  color:#fff!important;border-color:rgba(184,92,255,.16)!important;
+  border-left:2px solid #c273ff!important;
+  box-shadow:inset 0 0 22px rgba(184,92,255,.08)!important;
+}
+
+#content-area{
+  min-width:0!important;
+  padding:28px!important;
+  background:rgba(10,7,15,.92)!important;
+}
+.header-title{
+  min-height:42px!important;
+  padding:0 0 14px!important;margin-bottom:20px!important;
+  border-bottom:1px solid rgba(216,168,255,.12)!important;
+  color:#f7f0ff!important;font-size:20px!important;font-style:normal!important;
+  letter-spacing:.07em!important;
+}
+.orange-subheader{color:#eee6f4!important;font-size:16px!important;letter-spacing:.025em!important}
+
+.card-panel,.payload-card{
+  background:linear-gradient(145deg,rgba(27,18,38,.96),rgba(14,9,21,.97))!important;
+  border:1px solid rgba(215,166,255,.13)!important;
+  box-shadow:0 15px 35px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.025)!important;
+  border-radius:15px!important;
+}
+.card-panel{padding:25px!important}
+.payload-card{padding:20px!important}
+.payload-card:hover{
+  border-color:rgba(193,111,255,.42)!important;
+  box-shadow:0 15px 40px rgba(0,0,0,.34),0 0 25px rgba(172,76,255,.10)!important;
+  transform:translateY(-2px)!important;
+}
+.p-title{color:#f4eaff!important;font-size:15px!important}
+.p-fw{color:#c784ff!important;font-size:10px!important;letter-spacing:.09em!important}
+.p-desc{color:#aaa0b1!important}
+
+.btn-primary{
+  background:linear-gradient(135deg,#b85cff,#7b32d7)!important;
+  background-size:100% 100%!important;
+  animation:none!important;
+  color:#fff!important;
+  border:1px solid rgba(238,207,255,.24)!important;
+  border-radius:11px!important;
+  box-shadow:0 10px 28px rgba(119,46,194,.24),inset 0 1px 0 rgba(255,255,255,.2)!important;
+  font-size:13px!important;letter-spacing:.09em!important;
+}
+.btn-primary:hover{
+  transform:translateY(-1px)!important;
+  box-shadow:0 14px 32px rgba(119,46,194,.34),0 0 24px rgba(184,92,255,.14)!important;
+}
+
+#log-frame{padding-top:14px!important}
+#log-box{
+  height:108px!important;
+  background:rgba(4,3,7,.9)!important;
+  color:#d3a4ff!important;
+  border:1px solid rgba(184,92,255,.18)!important;
+  border-radius:11px!important;
+  box-shadow:inset 0 0 22px rgba(127,51,184,.08)!important;
+  font-size:12px!important;
+}
+
+/* Make the inline modal/loading screens match the clean theme. */
+#reboot-modal,#exploit-loading-overlay{
+  background:rgba(4,2,8,.78)!important;
+  backdrop-filter:blur(14px)!important;
+}
+#reboot-modal .card-panel,#exploit-loading-overlay .card-panel{
+  background:linear-gradient(145deg,rgba(25,16,36,.985),rgba(10,6,16,.985))!important;
+  border:1px solid rgba(205,137,255,.24)!important;
+  box-shadow:0 30px 80px rgba(0,0,0,.65),0 0 40px rgba(162,74,230,.14)!important;
+}
+#loading-progress-bar{
+  background:linear-gradient(90deg,#7b32d7,#b85cff,#e0a7ff)!important;
+  animation:none!important;
+}
+
+@media(max-width:900px){
+  #top-bar{padding:0 18px!important}
+  .brand-center{display:none!important}
+  #sidebar{width:190px!important}
+  #content-area{padding:20px!important}
+}
+@media(max-width:680px){
+  #app-base{width:100vw!important;min-height:100vh!important;margin:0!important;border-radius:0!important}
+  #app-base-inner{min-height:100vh!important;border-radius:0!important}
+  #body-layout{flex-direction:column!important;overflow:auto!important}
+  #sidebar{width:100%!important;display:grid!important;grid-template-columns:1fr 1fr!important;padding:8px!important}
+  #sidebar:before{grid-column:1/-1;padding:5px 8px 3px!important}
+  .nav-btn{min-height:42px!important;font-size:10px!important}
+  #content-area{padding:16px!important}
+  .brand-left{font-size:16px!important}
+  .status-badge{font-size:9px!important}
+}
+
 </style>
+
+<style id="rhm-erny-modern-ui">
+/* RHM ERNY UI refresh — visual layer only */
+:root{
+  --bg-dark:#05070d;--bg-base:#080c14;--sidebar-bg:rgba(7,11,20,.82);
+  --card-bg:rgba(12,17,28,.82);--border-color:rgba(255,255,255,.08);
+  --text-main:#f4f8ff;--text-dim:#8490a6;--theme-accent:#63e6ff;
+}
+body{background:radial-gradient(circle at 50% -10%,rgba(52,93,160,.22),transparent 38%),#05070d!important}
+#fx-canvas{opacity:.35!important}
+#app-base{background:transparent!important;box-shadow:none!important}
+#app-base-inner{border:1px solid rgba(255,255,255,.07)!important;border-radius:22px!important;background:rgba(7,10,17,.78)!important;box-shadow:0 25px 90px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.035)!important;overflow:hidden!important;backdrop-filter:blur(18px)}
+#top-bar{height:72px!important;padding:0 24px!important;background:rgba(10,15,25,.82)!important;border-bottom:1px solid rgba(255,255,255,.07)!important}
+.brand-left{font-size:18px!important;letter-spacing:.14em!important}
+.brand-center{font-size:10px!important;letter-spacing:.18em!important;opacity:.72}
+.status-badge{border-radius:999px!important;padding:8px 12px!important;font-size:9px!important;letter-spacing:.1em!important;background:rgba(99,230,255,.07)!important}
+#sidebar{background:rgba(5,8,15,.68)!important;border-right:1px solid rgba(255,255,255,.07)!important;padding:14px 10px!important;gap:6px!important}
+.nav-btn{border-radius:10px!important;border-left:2px solid transparent!important;color:#8792a7!important;padding:13px 12px!important;font-size:10px!important;letter-spacing:.05em!important}
+.nav-btn:hover{background:rgba(255,255,255,.045)!important;color:#eef8ff!important}
+.nav-btn.active{border-left-color:#63e6ff!important;background:linear-gradient(90deg,rgba(99,230,255,.11),transparent)!important;box-shadow:inset 0 0 25px rgba(99,230,255,.04)!important}
+#content-area{background:transparent!important;padding:28px!important}
+.header-title{font-size:21px!important;letter-spacing:.12em!important;border-bottom:1px solid rgba(255,255,255,.07)!important;padding-bottom:16px!important}
+.card-panel,.payload-card{background:linear-gradient(180deg,rgba(16,22,35,.82),rgba(9,13,22,.82))!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:16px!important;box-shadow:0 18px 50px rgba(0,0,0,.2)!important}
+.btn-primary{border-radius:12px!important;background:linear-gradient(135deg,#63e6ff,#6d5dfc)!important;background-size:100% 100%!important;animation:none!important;color:#031019!important;box-shadow:0 10px 30px rgba(99,230,255,.18)!important}
+.btn-primary:hover{transform:translateY(-2px)!important;box-shadow:0 14px 36px rgba(99,230,255,.28)!important}
+#log-frame{border-radius:14px!important;background:rgba(3,6,11,.72)!important;border:1px solid rgba(255,255,255,.06)!important}
+#log-box{border:none!important;background:transparent!important}
+.rgb-text,.brand-left,.brand-center,.header-title,.orange-subheader,.p-title,.status-badge{
+  background:linear-gradient(90deg,#63e6ff,#9b8cff)!important;background-clip:text!important;-webkit-background-clip:text!important;color:transparent!important;
+}
+.star{color:#63e6ff!important;text-shadow:0 0 10px rgba(99,230,255,.55)!important}
+@media(max-width:850px){
+  #app-base-inner{border-radius:0!important;min-height:100vh!important}
+  #content-area{padding:20px!important}
+}
+</style>
+
+
+<style id="rhm-erny-shadow-dragon-ui">
+/* RHM ERNY SHADOW DRAGON — visual-only skin. Existing JS/functionality untouched. */
+:root{
+  --theme-accent:#c968ff!important;
+  --violet:#b94fff;--violet2:#7226d5;--pink:#ef86ff;
+  --panel:rgba(13,7,21,.78);--panel2:rgba(25,11,37,.72);
+  --text-main:#fcf7ff;--text-dim:#aa9ab7;
+}
+html,body{
+  background:#07030b url("rhm-erny-bg.png") center center/cover fixed no-repeat!important;
+  font-family:Inter,Segoe UI,Arial,sans-serif!important;
+}
+body:before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(circle at 70% 35%,rgba(188,65,255,.17),transparent 30%),
+    linear-gradient(90deg,rgba(4,1,8,.80),rgba(7,2,12,.40),rgba(4,1,8,.78)),
+    linear-gradient(180deg,rgba(4,1,8,.32),rgba(4,1,8,.88));
+}
+body:after{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.16;
+  background-image:linear-gradient(rgba(238,173,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(238,173,255,.06) 1px,transparent 1px);
+  background-size:54px 54px;
+  mask-image:linear-gradient(to bottom,transparent,#000 20%,#000 80%,transparent);
+}
+#fx-canvas{opacity:.08!important;z-index:1!important}
+#lightning-flash{z-index:2!important}
+#app-base{
+  z-index:10!important;margin:18px auto!important;width:calc(100vw - 36px)!important;
+  max-width:1500px!important;min-height:calc(100vh - 36px)!important;
+  padding:1px!important;border-radius:26px!important;background:linear-gradient(135deg,rgba(239,137,255,.48),rgba(111,38,205,.28),rgba(255,255,255,.07))!important;
+  box-shadow:0 30px 100px rgba(0,0,0,.68),0 0 90px rgba(157,54,255,.12)!important;
+}
+#app-base-inner{
+  min-height:calc(100vh - 38px)!important;border-radius:25px!important;
+  background:rgba(7,3,12,.72)!important;border:1px solid rgba(255,255,255,.07)!important;
+  backdrop-filter:blur(17px)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;
+}
+#top-bar{
+  height:78px!important;min-height:78px!important;padding:0 25px!important;
+  background:rgba(10,5,17,.76)!important;border-bottom:1px solid rgba(207,125,255,.12)!important;
+}
+.brand-left{
+  font-size:19px!important;letter-spacing:.17em!important;
+  background:linear-gradient(90deg,#fff,#d8a2ff,#a94dff,#fff)!important;
+  background-size:220% auto!important;animation:shadowText 5s linear infinite!important;
+}
+.brand-center{
+  font-size:9px!important;letter-spacing:.22em!important;opacity:.8!important;
+  background:none!important;-webkit-text-fill-color:#a991b3!important;color:#a991b3!important;animation:none!important;
+}
+.status-badge{
+  font:800 9px Consolas,monospace!important;letter-spacing:.12em!important;
+  color:#e9b8ff!important;-webkit-text-fill-color:#e9b8ff!important;background:rgba(190,76,255,.08)!important;
+  border:1px solid rgba(214,112,255,.2)!important;border-radius:999px!important;padding:8px 11px!important;
+  animation:none!important;
+}
+.star{
+  color:#d77bff!important;-webkit-text-fill-color:#d77bff!important;
+  text-shadow:0 0 11px rgba(211,91,255,.75)!important;animation:none!important;
+}
+#body-layout{position:relative}
+#sidebar{
+  width:225px!important;padding:16px 11px!important;gap:6px!important;
+  background:rgba(6,2,11,.62)!important;border-right:1px solid rgba(211,115,255,.10)!important;
+}
+#sidebar:before{
+  content:"RHM ERNY";display:block;margin:0 10px 14px;padding:10px 12px;
+  border:1px solid rgba(214,115,255,.13);border-radius:12px;background:rgba(187,75,255,.05);
+  color:#cfa8db;font:800 8px Consolas,monospace;letter-spacing:.18em;
+}
+.nav-btn{
+  border:1px solid transparent!important;border-left:2px solid transparent!important;border-radius:12px!important;
+  color:#94839f!important;padding:13px 12px!important;font-size:10px!important;letter-spacing:.04em!important;
+  background:transparent!important;text-align:left!important;
+}
+.nav-btn:hover{
+  color:#f8eaff!important;background:rgba(188,74,255,.07)!important;
+  border-color:rgba(210,112,255,.10)!important;transform:translateX(2px);
+}
+.nav-btn.active{
+  color:#fff!important;border-left-color:#ce6cff!important;
+  background:linear-gradient(90deg,rgba(190,74,255,.16),rgba(190,74,255,.025))!important;
+  border-color:rgba(207,108,255,.12)!important;box-shadow:inset 0 0 25px rgba(183,69,255,.045),0 8px 24px rgba(0,0,0,.16)!important;
+}
+#content-area{padding:27px!important;background:transparent!important}
+.header-title{
+  font-size:19px!important;letter-spacing:.14em!important;padding-bottom:15px!important;margin-bottom:21px!important;
+  border-bottom:1px solid rgba(212,122,255,.11)!important;
+  background:linear-gradient(90deg,#fff,#cf8aff,#fff)!important;background-size:200% auto!important;
+  animation:shadowText 6s linear infinite!important;
+}
+.orange-subheader{
+  font-size:15px!important;color:#f2ddff!important;-webkit-text-fill-color:#f2ddff!important;
+  background:none!important;animation:none!important;
+}
+.card-panel,.payload-card{
+  background:
+    linear-gradient(145deg,rgba(27,12,38,.78),rgba(10,5,17,.72))!important;
+  border:1px solid rgba(213,121,255,.12)!important;border-radius:17px!important;
+  box-shadow:0 18px 55px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.035)!important;
+  backdrop-filter:blur(14px)!important;
+}
+.card-panel:hover,.payload-card:hover{
+  border-color:rgba(214,117,255,.28)!important;
+  box-shadow:0 20px 60px rgba(0,0,0,.36),0 0 28px rgba(169,65,255,.10)!important;
+}
+.btn-primary{
+  border-radius:13px!important;padding:15px 30px!important;
+  background:linear-gradient(135deg,#d27aff,#7c2bd8)!important;background-size:100% 100%!important;
+  animation:none!important;color:#17051e!important;border:1px solid rgba(255,255,255,.18)!important;
+  box-shadow:0 12px 35px rgba(174,68,255,.24),inset 0 1px 0 rgba(255,255,255,.28)!important;
+  text-shadow:none!important;
+}
+.btn-primary:hover{
+  transform:translateY(-2px)!important;
+  box-shadow:0 17px 45px rgba(180,73,255,.34),0 0 24px rgba(222,125,255,.16)!important;
+}
+.payload-grid{gap:16px!important}
+.payload-card{padding:20px!important}
+.p-title{
+  font-size:14px!important;color:#f5eaff!important;-webkit-text-fill-color:#f5eaff!important;
+  background:none!important;animation:none!important;
+}
+.p-fw{color:#ce83ff!important}
+.p-desc{color:#a99ab3!important}
+#log-frame{
+  margin-top:17px!important;padding:1px!important;border-radius:15px!important;
+  background:linear-gradient(135deg,rgba(212,113,255,.18),rgba(255,255,255,.03))!important;
+}
+#log-box{
+  height:105px!important;border:0!important;border-radius:14px!important;
+  background:rgba(5,2,9,.76)!important;color:#dba2ff!important;
+  box-shadow:inset 0 0 30px rgba(170,61,255,.06)!important;padding:13px!important;
+}
+#reboot-modal,#exploit-loading-overlay{background:rgba(4,1,8,.84)!important;backdrop-filter:blur(16px)!important}
+#reboot-modal .card-panel,#exploit-loading-overlay .card-panel{
+  background:linear-gradient(145deg,rgba(28,12,40,.96),rgba(8,3,13,.96))!important;
+  border:1px solid rgba(216,119,255,.2)!important;
+  box-shadow:0 30px 100px rgba(0,0,0,.65),0 0 70px rgba(171,57,255,.12)!important;
+}
+#loading-stage-badge{
+  background:rgba(194,75,255,.09)!important;border-color:rgba(217,119,255,.3)!important;
+  color:#dc91ff!important;
+}
+#loading-progress-bar{
+  background:linear-gradient(90deg,#6c22c8,#b74eff,#f08cff)!important;
+  animation:none!important;box-shadow:0 0 18px rgba(202,91,255,.55)!important;
+}
+#loading-detail-box{background:rgba(4,2,8,.85)!important;border-color:rgba(214,117,255,.11)!important;color:#d996ff!important}
+.rgb-text{
+  background:linear-gradient(90deg,#fff,#d08aff,#9b42f1,#fff)!important;background-size:220% auto!important;
+  -webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important;animation:shadowText 5s linear infinite!important;
+}
+@keyframes shadowText{to{background-position:220% center}}
+@media(max-width:760px){
+  #app-base{margin:8px!important;width:calc(100vw - 16px)!important;min-height:calc(100vh - 16px)!important}
+  #app-base-inner{min-height:calc(100vh - 18px)!important}
+  #top-bar{padding:0 15px!important}
+  #sidebar{width:175px!important}
+  #content-area{padding:19px!important}
+}
+@media(max-width:560px){
+  #top-bar .brand-center{display:none}
+  #sidebar{width:100%!important;display:grid!important;grid-template-columns:1fr 1fr!important;height:auto!important}
+  #sidebar:before{grid-column:1/-1}
+  #body-layout{flex-direction:column}
+  #content-area{min-height:0}
+}
+</style>
+
 </head>
 <body>
 
@@ -351,7 +775,7 @@ html, body {
 
   <!-- Top Bar -->
   <div id="top-bar">
-    <div class="brand-left"><span class="star">&#9733;</span> ZOOF13R'S <span class="star">&#9733;</span></div>
+    <div class="brand-left"><span class="star">&#9733;</span> RHM ERNY'S <span class="star">&#9733;</span></div>
     <div class="brand-center"><span class="star">&#9733;</span> WEBKIT <span class="star">&#9733;</span></div>
     <div class="status-badge" id="status-badge">[HOST READY]</div>
   </div>
@@ -387,7 +811,7 @@ html, body {
           <div class="payload-card" onclick="launchJB('ps4debug=1')">
             <div class="p-title"><span class="star">&#9733;</span> ps4debug [RTM Port :744] <span class="star">&#9733;</span></div>
             <div class="p-fw">FIRMWARE 13.52</div>
-            <div class="p-desc">Opens :744 port for zoof13r BO2 RTM tool connection.</div>
+            <div class="p-desc">Opens :744 port for RHM ERNY BO2 RTM tool connection.</div>
           </div>
 
           <div class="payload-card" onclick="launchJB('hen=1')">
@@ -413,7 +837,7 @@ html, body {
           <div><b class="rgb-text">2.</b> Click <b><span class="star">&#9733;</span> RUN JAILBREAK NOW <span class="star">&#9733;</span></b>.</div>
           <div><b style="color: var(--green)">3.</b> Wait for <b>JAILBROKEN</b> banner confirmation.</div>
           <div><b style="color: var(--green)">4.</b> Select <b><span class="star">&#9733;</span> ps4debug <span class="star">&#9733;</span></b> or <b><span class="star">&#9733;</span> GoldHEN <span class="star">&#9733;</span></b>.</div>
-          <div><b style="color: var(--cyan-blue)">5.</b> Open <b>ZOOF13R BO2 RTM TOOL</b> on PC &rarr; Connect PS4 IP &rarr; Attach BO2!</div>
+          <div><b style="color: var(--cyan-blue)">5.</b> Open <b>RHM ERNY BO2 RTM TOOL</b> on PC &rarr; Connect PS4 IP &rarr; Attach BO2!</div>
         </div>
       </div>
 
@@ -425,7 +849,7 @@ html, body {
 
       <!-- Green System Log Box -->
       <div id="log-frame">
-        <div id="log-box">[05:37:15] ZOOF13R'S JAILBREAK TOOL READY...</div>
+        <div id="log-box">[05:37:15] RHM ERNY JAILBREAK TOOL READY...</div>
       </div>
 
       <!-- Automated Reboot Modal & Status Overlay -->
@@ -924,3 +1348,211 @@ function cancelAutoReboot() {
 </script>
 </body>
 </html>
+
+<style id="rhm-erny-complete-redesign">
+/* RHM ERNY — COMPLETE INTERFACE REDESIGN
+   Visual layer only. Existing HTML IDs, buttons, onclick handlers and scripts are preserved. */
+:root{
+  --re-bg:#07030c;
+  --re-panel:rgba(12,8,19,.88);
+  --re-panel2:rgba(20,12,30,.82);
+  --re-line:rgba(219,164,255,.14);
+  --re-accent:#c66cff;
+  --re-accent2:#8c3be5;
+  --re-text:#fbf8ff;
+  --re-muted:#9e91aa;
+  --re-green:#9fffcf;
+}
+html,body{
+  background:#050208 url('rhm-erny-bg.png') center/cover fixed no-repeat!important;
+  color:var(--re-text)!important;
+  font-family:Inter,Segoe UI,system-ui,sans-serif!important;
+}
+body:before{
+  z-index:0!important;content:""!important;position:fixed!important;inset:0!important;
+  background:
+    linear-gradient(90deg,rgba(3,1,7,.90) 0%,rgba(5,2,10,.60) 48%,rgba(3,1,7,.88) 100%),
+    linear-gradient(180deg,rgba(4,1,8,.35),rgba(4,1,8,.86))!important;
+}
+body:after{display:none!important}
+#fx-canvas{opacity:.025!important}
+#lightning-flash{display:none!important}
+
+#app-base{
+  width:min(1540px,calc(100vw - 42px))!important;
+  min-height:calc(100vh - 42px)!important;
+  margin:21px auto!important;
+  padding:0!important;
+  border:1px solid rgba(229,191,255,.16)!important;
+  border-radius:22px!important;
+  background:rgba(7,3,12,.78)!important;
+  box-shadow:0 35px 120px rgba(0,0,0,.72),0 0 80px rgba(137,47,211,.12)!important;
+  overflow:hidden!important;
+}
+#app-base-inner{
+  min-height:calc(100vh - 42px)!important;
+  border:0!important;border-radius:0!important;
+  background:rgba(7,3,12,.68)!important;
+  backdrop-filter:blur(18px)!important;
+}
+
+/* Header becomes a clean command bar */
+#top-bar{
+  height:72px!important;min-height:72px!important;
+  padding:0 22px!important;
+  background:rgba(9,5,15,.91)!important;
+  border-bottom:1px solid var(--re-line)!important;
+}
+.brand-left,.brand-center,.status-badge{
+  background:none!important;animation:none!important;
+  -webkit-text-fill-color:initial!important;
+}
+.brand-left{
+  display:flex!important;align-items:center!important;gap:9px!important;
+  color:#fff!important;font-size:18px!important;font-weight:900!important;
+  letter-spacing:.13em!important;
+}
+.brand-left:before{
+  content:"RE";display:grid;place-items:center;width:34px;height:34px;
+  border-radius:10px;background:linear-gradient(145deg,#d58aff,#7628d1);
+  color:#16051e;font-size:11px;font-weight:950;letter-spacing:0;
+  box-shadow:0 8px 24px rgba(177,72,255,.25),inset 0 1px rgba(255,255,255,.4);
+}
+.brand-left .star{display:none!important}
+.brand-center{
+  position:absolute!important;left:50%;transform:translateX(-50%);
+  color:#887991!important;font:800 9px Consolas,monospace!important;
+  letter-spacing:.25em!important;
+}
+.brand-center .star{display:none!important}
+.status-badge{
+  color:#c9ffea!important;-webkit-text-fill-color:#c9ffea!important;
+  background:rgba(93,255,184,.055)!important;
+  border:1px solid rgba(120,255,200,.18)!important;
+  border-radius:999px!important;padding:7px 11px!important;
+  font:800 9px Consolas,monospace!important;letter-spacing:.1em!important;
+}
+
+#body-layout{min-height:0!important}
+/* Sidebar becomes a compact vertical control rail */
+#sidebar{
+  width:214px!important;padding:17px 12px!important;gap:7px!important;
+  background:rgba(7,3,12,.82)!important;
+  border-right:1px solid var(--re-line)!important;
+}
+#sidebar:before{
+  content:"CONTROL CENTER"!important;
+  display:block!important;margin:0 8px 8px!important;padding:8px 10px!important;
+  color:#77677f!important;font:800 8px Consolas,monospace!important;
+  letter-spacing:.2em!important;border:0!important;background:none!important;
+}
+.nav-btn{
+  min-height:46px!important;padding:11px 12px!important;
+  border:1px solid transparent!important;border-left:2px solid transparent!important;
+  border-radius:10px!important;background:transparent!important;
+  color:#988ba1!important;font-size:10px!important;font-weight:800!important;
+  letter-spacing:.045em!important;transition:.18s ease!important;
+}
+.nav-btn .star{display:none!important}
+.nav-btn:before{content:"";display:inline-block;width:7px;height:7px;margin-right:10px;border-radius:2px;background:#51455a;vertical-align:1px;transition:.18s}
+.nav-btn:hover{background:rgba(190,91,255,.055)!important;color:#f5eaff!important;border-color:rgba(213,142,255,.08)!important;transform:none!important}
+.nav-btn:hover:before{background:#b85cff;box-shadow:0 0 10px #b85cff}
+.nav-btn.active{
+  background:linear-gradient(90deg,rgba(189,88,255,.14),rgba(189,88,255,.025))!important;
+  color:#fff!important;border-color:rgba(205,119,255,.12)!important;
+  border-left:2px solid #c66cff!important;
+  box-shadow:inset 0 0 20px rgba(181,73,255,.045)!important;
+}
+.nav-btn.active:before{background:#d27bff;box-shadow:0 0 12px rgba(210,123,255,.8)}
+
+#content-area{
+  min-width:0!important;padding:25px 27px 21px!important;
+  background:transparent!important;
+}
+.header-title{
+  display:flex!important;align-items:center!important;
+  min-height:38px!important;margin-bottom:17px!important;padding:0 0 13px!important;
+  border-bottom:1px solid rgba(255,255,255,.075)!important;
+  background:none!important;animation:none!important;
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+  font-size:17px!important;font-style:normal!important;font-weight:850!important;
+  letter-spacing:.105em!important;
+}
+.header-title .star{display:none!important}
+.header-title:before{
+  content:"";width:4px;height:22px;margin-right:11px;border-radius:8px;
+  background:linear-gradient(#d58bff,#8433d9);box-shadow:0 0 16px rgba(199,94,255,.45);
+}
+.orange-subheader{
+  color:#eee7f2!important;-webkit-text-fill-color:#eee7f2!important;
+  background:none!important;animation:none!important;font-size:14px!important;
+}
+.orange-subheader .star{display:none!important}
+
+/* Hero / panels */
+.card-panel,.payload-card{
+  background:linear-gradient(145deg,rgba(24,14,33,.88),rgba(10,6,16,.91))!important;
+  border:1px solid rgba(224,181,255,.105)!important;
+  border-radius:15px!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.27),inset 0 1px rgba(255,255,255,.035)!important;
+  backdrop-filter:blur(13px)!important;
+}
+.card-panel{padding:23px!important}
+.payload-grid{gap:13px!important}
+.payload-card{padding:18px!important}
+.payload-card:hover{transform:translateY(-2px)!important;border-color:rgba(202,111,255,.30)!important;box-shadow:0 20px 55px rgba(0,0,0,.35),0 0 25px rgba(173,66,255,.08)!important}
+.p-title{background:none!important;animation:none!important;color:#f5edfa!important;-webkit-text-fill-color:#f5edfa!important;font-size:13px!important}
+.p-title .star{display:none!important}
+.p-fw{color:#c987ff!important;font-size:9px!important;letter-spacing:.12em!important}
+.p-desc{color:#9f93a9!important;line-height:1.55!important}
+
+.btn-primary{
+  background:linear-gradient(135deg,#d185ff,#8536d8)!important;
+  background-size:100% 100%!important;animation:none!important;
+  color:#17051e!important;-webkit-text-fill-color:#17051e!important;
+  border:1px solid rgba(255,255,255,.22)!important;border-radius:11px!important;
+  box-shadow:0 12px 32px rgba(151,55,220,.25),inset 0 1px rgba(255,255,255,.35)!important;
+  font-size:12px!important;letter-spacing:.09em!important;
+}
+.btn-primary:hover{transform:translateY(-2px)!important;box-shadow:0 16px 42px rgba(162,62,236,.32)!important}
+
+#log-frame{margin-top:14px!important;padding:1px!important;border-radius:13px!important;background:rgba(209,139,255,.08)!important}
+#log-box{
+  height:92px!important;border:0!important;border-radius:12px!important;
+  background:rgba(4,2,8,.78)!important;color:#c7b7d0!important;
+  box-shadow:none!important;font-size:11px!important;padding:12px!important;
+}
+
+/* Guide text and miscellaneous inline content */
+#tab-guide .card-panel div{color:#c2b6ca!important}
+#tab-guide b{color:#f7effb!important}
+.rgb-text{background:none!important;animation:none!important;-webkit-text-fill-color:#c98aff!important;color:#c98aff!important}
+
+/* Modal / loader — same design language */
+#reboot-modal,#exploit-loading-overlay{background:rgba(3,1,7,.82)!important;backdrop-filter:blur(18px)!important}
+#reboot-modal .card-panel,#exploit-loading-overlay .card-panel{
+  background:linear-gradient(145deg,rgba(26,13,37,.97),rgba(7,3,12,.97))!important;
+  border:1px solid rgba(215,132,255,.18)!important;border-radius:18px!important;
+  box-shadow:0 30px 110px rgba(0,0,0,.7),0 0 60px rgba(173,64,255,.12)!important;
+}
+#loading-stage-badge{background:rgba(192,88,255,.08)!important;border-color:rgba(210,126,255,.25)!important;color:#d99aff!important}
+#loading-progress-bar{background:linear-gradient(90deg,#7d2bd4,#bd63ff,#e19cff)!important;animation:none!important;box-shadow:0 0 17px rgba(201,95,255,.45)!important}
+#loading-detail-box{background:rgba(3,1,7,.7)!important;border-color:rgba(211,131,255,.1)!important;color:#d5a0ee!important}
+
+@media(max-width:850px){
+  #app-base{width:100vw!important;min-height:100vh!important;margin:0!important;border-radius:0!important}
+  #app-base-inner{min-height:100vh!important}
+}
+@media(max-width:650px){
+  #top-bar{padding:0 14px!important}
+  .brand-center{display:none!important}
+  #sidebar{width:168px!important}
+  #content-area{padding:18px!important}
+}
+@media(max-width:520px){
+  #body-layout{flex-direction:column!important;overflow:auto!important}
+  #sidebar{width:100%!important;display:grid!important;grid-template-columns:1fr 1fr!important;padding:10px!important;border-right:0!important;border-bottom:1px solid var(--re-line)!important}
+  #sidebar:before{grid-column:1/-1;margin:0!important}
+  #content-area{overflow:visible!important}
+}
+</style>

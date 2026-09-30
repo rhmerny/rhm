@@ -1,9 +1,9 @@
 {
-  "name": "ZOOF13R 13.52 Host",
+  "name": "ZOOF13R 14.00 Host",
   "version": "2.0.0",
-  "target": "13.52",
+  "target": "14.00",
   "mode": "staging",
-  "exploitAdapter": "./exploit-adapter.js",
+  "exploitAdapter": "../modules/exploit-adapter.js",
   "hen": {
     "preferred": "GoldHEN",
     "status": "adapter-required"
