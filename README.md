@@ -1,4 +1,4 @@
-# zoof13r // PS4 13.52 Payload Host
+# RHM ERNY// PS4 13.52 Payload Host
 
 GitHub Pages hosted exploit launcher — same pattern as raw13g.
 
@@ -8,7 +8,7 @@ GitHub Pages hosted exploit launcher — same pattern as raw13g.
 # 1. create a new repo on GitHub (e.g. zoofier/ps4-jb)
 git init
 git add .
-git commit -m "zoof13r 13.52 payload host"
+git commit -m "RHM ERNY13.52 payload host"
 git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
 git push -u origin main
 ```

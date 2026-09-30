@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-zoof13r // PS4 13.52 Local Payload Host Server
+RHM ERNY// PS4 13.52 Local Payload Host Server
 Serves the jailbreak page to your PS4's browser over your LAN.
 Handles /t telemetry POSTs so the exploit engine can log to your terminal.
 """
@@ -132,7 +132,7 @@ def main():
 
     print(f"""
 {M}{'─'*54}{RST}
-{BOLD}{W}  zoof13r // PS4 13.52 Payload Host{RST}
+{BOLD}{W}  RHM ERNY// PS4 13.52 Payload Host{RST}
 {M}{'─'*54}{RST}
   {G}●{RST} Server ready
   {C}LAN URL  :{RST}  http://{ip}:{PORT}/
