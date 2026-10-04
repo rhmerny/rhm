@@ -1,160 +1,1558 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" manifest="cache.appcache">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>RAW GAME</title>
-    <style>
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        min-height: 100%;
-        background: #0b0d10;
-        color: #c8ced8;
-        font:
-          15px/1.45 "Segoe UI",
-          system-ui,
-          sans-serif;
-      }
-      #brand {
-        text-align: center;
-        padding: 8px 10px;
-        background: #0e1116;
-        border-bottom: 1px solid #1e2732;
-      }
-      #brand img {
-        width: 28px;
-        height: 28px;
-        margin-right: 8px;
-        border-radius: 50%;
-        vertical-align: middle;
-      }
-      #brand b {
-        font-size: 15px;
-        font-weight: 700;
-        letter-spacing: 0.14em;
-        color: #e6ebf2;
-        vertical-align: middle;
-      }
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RHM ERNY // BO2 RTM TOOL & HOST</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700;900&family=Consolas:wght@400;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
 
-      /* running: a spinner under the brand. jb.js sets body.done / body.fail / body.log. */
-      #spin {
-        position: fixed;
-        top: calc(50% + 20px);
-        left: 50%;
-        width: 46px;
-        height: 46px;
-        margin: -23px 0 0 -23px;
-        border: 4px solid #1e2732;
-        border-top-color: #7fd0a0;
-        border-radius: 50%;
-        animation: spin 0.9s linear infinite;
-      }
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-      #msg {
-        position: fixed;
-        top: 50%;
-        left: 0;
-        right: 0;
-        transform: translateY(-50%);
-        text-align: center;
-        font-size: 16px;
-        letter-spacing: 0.5px;
-        display: none;
-      }
-      #wrap {
-        padding: 0;
-      }
-      #state,
-      #out {
-        display: none;
-      }
+:root {
+  --bg-dark: #07070c;
+  --bg-base: #0e0e17;
+  --sidebar-bg: #0b0b12;
+  --card-bg: #12121c;
+  --border-color: rgba(255, 255, 255, 0.12);
+  --text-main: #ffffff;
+  --text-dim: #a0a0b8;
+  --theme-accent: #00d4ff;
+}
 
-      body.done #spin {
-        display: none;
-      }
-      body.fail #spin {
-        display: none;
-      }
-      body.fail #msg {
-        display: block;
-      }
-      body.done #msg {
-        display: block;
-        color: #7fd0a0;
-        font-weight: 700;
-        letter-spacing: 2px;
-      }
+/* ── Keyframe Animations ── */
+@keyframes rainbowShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes rainbowText {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 30px rgba(0, 212, 255, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.1); }
+  100% { box-shadow: 0 0 55px rgba(255, 0, 128, 0.9), inset 0 0 25px rgba(255, 255, 255, 0.2); }
+}
+@keyframes starSpin {
+  0% { transform: translateY(-2px) rotate(0deg) scale(1); }
+  100% { transform: translateY(-2px) rotate(360deg) scale(1.15); }
+}
 
-      /* ?log=1 -- the full step log, styled like the landing. */
-      body.log #spin,
-      body.log #msg {
-        display: none;
-      }
-      body.log #wrap {
-        padding: 14px 18px;
-      }
-      body.log #state {
-        display: block;
-        font-size: 22px;
-        font-weight: 700;
-        margin: 0 0 8px;
-      }
-      body.log #out {
-        display: block;
-        white-space: pre-wrap;
-        font:
-          12px/1.45 Consolas,
-          monospace;
-        background: #11151b;
-        border: 1px solid #1e2732;
-        border-radius: 5px;
-        padding: 10px 12px;
-        height: calc(100vh - 141px);
-        overflow-y: auto;
-      }
-      .ok {
-        color: #7fd0a0;
-      }
-      .bad {
-        color: #d08a7f;
-      }
-      .warn {
-        color: #d8c07f;
-      }
-      .safe {
-        color: #7fd0a0;
-      }
-      .danger {
-        color: #d08a7f;
-      }
-      code {
-        color: #9fb3d0;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="brand">
-      <img
-        src="data:image/png;base64,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"
-        alt=""
-        width="28"
-        height="28"
-      /><b>RAW GAME</b>
+/* ── Global Master Prismatic RGB Typography & Elements ── */
+.rgb-text, .brand-left, .brand-center, .header-title, .orange-subheader, .p-title, .status-badge {
+  background: linear-gradient(90deg, #ff0055, #ff7700, #ffea00, #00ff88, #00d4ff, #9d00ff, #ff0055) !important;
+  background-size: 300% 300% !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  animation: rainbowText 3.5s linear infinite !important;
+  font-weight: 900 !important;
+}
+
+.star {
+  font-size: 14px !important;
+  vertical-align: middle !important;
+  display: inline-block !important;
+  margin: 0 6px !important;
+  color: #ffea00 !important;
+  -webkit-text-fill-color: #ffea00 !important;
+  text-shadow: 0 0 10px #ffea00, 0 0 20px #ff7700 !important;
+  animation: starSpin 3s ease-in-out infinite alternate !important;
+}
+
+html, body {
+  min-height: 100vh;
+  background: radial-gradient(circle at center, #141424 0%, #07070c 100%) !important;
+  color: var(--text-main);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+  font-size: 14px;
+  overflow-x: hidden;
+}
+
+/* Master Outer Container with 400% Shifting Prismatic Border */
+#app-base {
+  position: relative !important;
+  z-index: 10 !important;
+  margin: 20px auto !important;
+  width: calc(100vw - 40px) !important;
+  max-width: 1400px !important;
+  min-height: calc(100vh - 40px) !important;
+  border-radius: 20px !important;
+  padding: 4px !important;
+  background: linear-gradient(135deg, #ff0055, #ff7700, #ffea00, #00ff88, #00d4ff, #9d00ff, #ff0055) !important;
+  background-size: 400% 400% !important;
+  animation: rainbowShift 3.5s linear infinite, glowPulse 2s ease-in-out infinite alternate !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+#app-base-inner {
+  background-color: #0e0e17 !important;
+  border-radius: 16px !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: calc(100vh - 48px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+/* ── Top Bar ── */
+#top-bar {
+  background: rgba(14, 14, 23, 0.95) !important;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
+  height: 85px;
+  min-height: 85px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.brand-left {
+  font-family: 'Arial Black', Impact, sans-serif;
+  font-weight: 900;
+  font-style: italic;
+  font-size: 34px;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.brand-center {
+  font-family: 'Arial Black', Impact, sans-serif;
+  font-weight: 900;
+  font-style: italic;
+  font-size: 40px;
+  letter-spacing: 4px;
+  white-space: nowrap;
+}
+
+.status-badge {
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+/* ── Main Layout ── */
+#body-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Sidebar Navigation ── */
+#sidebar {
+  width: 240px;
+  background-color: #0b0b12 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.nav-btn {
+  background-color: transparent;
+  color: #a0a0b8;
+  text-align: left;
+  padding: 16px 24px;
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  border-left: 4px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  outline: none;
+}
+
+.nav-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+.nav-btn.active {
+  background: linear-gradient(90deg, rgba(0, 212, 255, 0.15), transparent) !important;
+  color: #ffffff !important;
+  border-left: 4px solid #00d4ff !important;
+  box-shadow: inset 0 0 15px rgba(0, 212, 255, 0.2) !important;
+}
+
+/* ── Content Area ── */
+#content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  background: #0e0e17 !important;
+}
+
+.header-title {
+  font-size: 24px;
+  font-weight: 900;
+  font-style: italic;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.orange-subheader {
+  font-weight: 900;
+  font-size: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Cards & Panels ── */
+.card-panel {
+  background-color: #12121c !important;
+  border-radius: 14px !important;
+  padding: 24px !important;
+  margin-bottom: 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ── Form Controls & Primary Button ── */
+.btn-primary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  padding: 16px 36px !important;
+  border-radius: 10px !important;
+  background: linear-gradient(90deg, #ff0055, #ff5500, #ffcc00, #00ff88, #00ccff, #7700ff, #ff0055) !important;
+  background-size: 300% 300% !important;
+  animation: rainbowShift 3.5s linear infinite !important;
+  color: #000000 !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.12em !important;
+  text-decoration: none !important;
+  box-shadow: 0 0 30px rgba(255, 119, 0, 0.85) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  cursor: pointer !important;
+  border: none !important;
+}
+.btn-primary:hover {
+  transform: scale(1.05) !important;
+  box-shadow: 0 0 45px rgba(0, 255, 136, 0.95), 0 0 65px rgba(255, 0, 85, 0.85) !important;
+}
+
+/* ── Green Console Log Box ── */
+#log-frame {
+  margin-top: auto;
+  padding-top: 15px;
+}
+#log-box {
+  background-color: #050508 !important;
+  color: #00ff88 !important;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 13px;
+  border: 1px solid rgba(0, 255, 136, 0.3) !important;
+  border-radius: 8px;
+  padding: 14px;
+  height: 120px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  box-shadow: inset 0 0 15px rgba(0, 255, 136, 0.1) !important;
+}
+
+.payload-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.payload-card {
+  background-color: #12121c !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+.payload-card:hover {
+  border-color: #00d4ff !important;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.4) !important;
+  transform: translateY(-3px) !important;
+}
+.p-title {
+  font-size: 16px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+}
+.p-fw {
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #00ff88 !important;
+}
+.p-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+/* Fixed Full-Screen Canvas Engine */
+#fx-canvas {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+#lightning-flash {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(255, 255, 255, 0.85);
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.05s ease-out;
+}
+
+/* Emoji Styling Fix */
+.emoji {
+  display: inline-block !important;
+  font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', 'Segoe UI Symbol', sans-serif !important;
+  vertical-align: middle !important;
+  -webkit-text-fill-color: initial !important;
+  background: none !important;
+  font-style: normal !important;
+}
+
+
+/* ===== RHM ERNY CLEAN SHADOW DRAGON UI OVERRIDE ===== */
+:root{
+  --bg-dark:#08050d;
+  --bg-base:#0d0913;
+  --sidebar-bg:rgba(10,7,16,.94);
+  --card-bg:rgba(20,14,29,.96);
+  --border-color:rgba(203,137,255,.18);
+  --text-main:#f8f4ff;
+  --text-dim:#b7adbf;
+  --theme-accent:#bd70ff;
+  --purple:#b85cff;
+  --purple2:#7b32d7;
+  --purple-soft:rgba(184,92,255,.14);
+}
+
+html,body{
+  min-height:100vh!important;
+  background:
+    linear-gradient(180deg,rgba(5,2,10,.66),rgba(7,3,12,.84)),
+    url('rhm-erny-bg.png') center center / cover fixed no-repeat!important;
+  color:var(--text-main)!important;
+}
+
+body:before{
+  content:"";position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(circle at 50% 30%,rgba(178,80,255,.12),transparent 42%),linear-gradient(90deg,rgba(3,1,7,.32),transparent 35%,transparent 65%,rgba(3,1,7,.38));
+}
+
+#fx-canvas{opacity:.06!important;z-index:2!important}
+#lightning-flash{z-index:3!important}
+
+#app-base{
+  z-index:10!important;
+  width:min(1460px,calc(100vw - 36px))!important;
+  min-height:calc(100vh - 36px)!important;
+  margin:18px auto!important;
+  padding:1px!important;
+  border-radius:22px!important;
+  background:linear-gradient(135deg,rgba(221,164,255,.55),rgba(126,47,211,.34),rgba(255,255,255,.08))!important;
+  box-shadow:0 30px 90px rgba(0,0,0,.72),0 0 45px rgba(155,69,232,.14)!important;
+  animation:none!important;
+}
+
+#app-base-inner{
+  min-height:calc(100vh - 38px)!important;
+  background:rgba(8,5,13,.94)!important;
+  border:1px solid rgba(255,255,255,.055)!important;
+  border-radius:21px!important;
+  backdrop-filter:blur(18px)!important;
+}
+
+#top-bar{
+  height:76px!important;min-height:76px!important;
+  padding:0 26px!important;
+  background:rgba(10,7,16,.96)!important;
+  border-bottom:1px solid rgba(202,136,255,.16)!important;
+}
+
+.brand-left,.brand-center,.header-title,.orange-subheader,.p-title,.status-badge,.rgb-text{
+  background:none!important;
+  background-image:none!important;
+  -webkit-background-clip:initial!important;
+  -webkit-text-fill-color:initial!important;
+  animation:none!important;
+  color:var(--text-main)!important;
+}
+
+.brand-left{
+  font-family:'Segoe UI',system-ui,sans-serif!important;
+  font-size:20px!important;font-style:normal!important;font-weight:900!important;
+  letter-spacing:.12em!important;
+}
+.brand-center{
+  font-family:'Segoe UI',system-ui,sans-serif!important;
+  font-size:16px!important;font-style:normal!important;font-weight:800!important;
+  letter-spacing:.22em!important;color:#c99bff!important;
+}
+.status-badge{
+  color:#d9b7ff!important;font:800 11px Consolas,monospace!important;
+  letter-spacing:.08em!important;
+  padding:8px 12px!important;border-radius:999px!important;
+  border:1px solid rgba(194,113,255,.24)!important;
+  background:rgba(170,82,255,.08)!important;
+}
+
+.star{
+  color:#d38bff!important;-webkit-text-fill-color:#d38bff!important;
+  text-shadow:0 0 10px rgba(195,100,255,.5)!important;
+  animation:none!important;transform:none!important;
+}
+
+#body-layout{min-height:0!important}
+#sidebar{
+  width:225px!important;
+  padding:16px 10px!important;
+  gap:5px!important;
+  background:rgba(9,6,14,.97)!important;
+  border-right:1px solid rgba(207,141,255,.12)!important;
+}
+#sidebar:before{
+  content:'RHM ERNY  /  CONTROL';
+  display:block;color:#75657f;font:800 9px Consolas,monospace;letter-spacing:.16em;
+  padding:5px 13px 12px;
+}
+.nav-btn{
+  position:relative!important;
+  min-height:48px!important;
+  padding:12px 14px!important;
+  border:1px solid transparent!important;
+  border-left:2px solid transparent!important;
+  border-radius:10px!important;
+  background:transparent!important;
+  color:#a9a0b0!important;
+  font-size:12px!important;font-weight:750!important;
+  letter-spacing:.02em!important;
+}
+.nav-btn:hover{background:rgba(184,92,255,.07)!important;color:#f6efff!important;border-color:rgba(184,92,255,.12)!important}
+.nav-btn.active{
+  background:linear-gradient(90deg,rgba(184,92,255,.15),rgba(184,92,255,.035))!important;
+  color:#fff!important;border-color:rgba(184,92,255,.16)!important;
+  border-left:2px solid #c273ff!important;
+  box-shadow:inset 0 0 22px rgba(184,92,255,.08)!important;
+}
+
+#content-area{
+  min-width:0!important;
+  padding:28px!important;
+  background:rgba(10,7,15,.92)!important;
+}
+.header-title{
+  min-height:42px!important;
+  padding:0 0 14px!important;margin-bottom:20px!important;
+  border-bottom:1px solid rgba(216,168,255,.12)!important;
+  color:#f7f0ff!important;font-size:20px!important;font-style:normal!important;
+  letter-spacing:.07em!important;
+}
+.orange-subheader{color:#eee6f4!important;font-size:16px!important;letter-spacing:.025em!important}
+
+.card-panel,.payload-card{
+  background:linear-gradient(145deg,rgba(27,18,38,.96),rgba(14,9,21,.97))!important;
+  border:1px solid rgba(215,166,255,.13)!important;
+  box-shadow:0 15px 35px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.025)!important;
+  border-radius:15px!important;
+}
+.card-panel{padding:25px!important}
+.payload-card{padding:20px!important}
+.payload-card:hover{
+  border-color:rgba(193,111,255,.42)!important;
+  box-shadow:0 15px 40px rgba(0,0,0,.34),0 0 25px rgba(172,76,255,.10)!important;
+  transform:translateY(-2px)!important;
+}
+.p-title{color:#f4eaff!important;font-size:15px!important}
+.p-fw{color:#c784ff!important;font-size:10px!important;letter-spacing:.09em!important}
+.p-desc{color:#aaa0b1!important}
+
+.btn-primary{
+  background:linear-gradient(135deg,#b85cff,#7b32d7)!important;
+  background-size:100% 100%!important;
+  animation:none!important;
+  color:#fff!important;
+  border:1px solid rgba(238,207,255,.24)!important;
+  border-radius:11px!important;
+  box-shadow:0 10px 28px rgba(119,46,194,.24),inset 0 1px 0 rgba(255,255,255,.2)!important;
+  font-size:13px!important;letter-spacing:.09em!important;
+}
+.btn-primary:hover{
+  transform:translateY(-1px)!important;
+  box-shadow:0 14px 32px rgba(119,46,194,.34),0 0 24px rgba(184,92,255,.14)!important;
+}
+
+#log-frame{padding-top:14px!important}
+#log-box{
+  height:108px!important;
+  background:rgba(4,3,7,.9)!important;
+  color:#d3a4ff!important;
+  border:1px solid rgba(184,92,255,.18)!important;
+  border-radius:11px!important;
+  box-shadow:inset 0 0 22px rgba(127,51,184,.08)!important;
+  font-size:12px!important;
+}
+
+/* Make the inline modal/loading screens match the clean theme. */
+#reboot-modal,#exploit-loading-overlay{
+  background:rgba(4,2,8,.78)!important;
+  backdrop-filter:blur(14px)!important;
+}
+#reboot-modal .card-panel,#exploit-loading-overlay .card-panel{
+  background:linear-gradient(145deg,rgba(25,16,36,.985),rgba(10,6,16,.985))!important;
+  border:1px solid rgba(205,137,255,.24)!important;
+  box-shadow:0 30px 80px rgba(0,0,0,.65),0 0 40px rgba(162,74,230,.14)!important;
+}
+#loading-progress-bar{
+  background:linear-gradient(90deg,#7b32d7,#b85cff,#e0a7ff)!important;
+  animation:none!important;
+}
+
+@media(max-width:900px){
+  #top-bar{padding:0 18px!important}
+  .brand-center{display:none!important}
+  #sidebar{width:190px!important}
+  #content-area{padding:20px!important}
+}
+@media(max-width:680px){
+  #app-base{width:100vw!important;min-height:100vh!important;margin:0!important;border-radius:0!important}
+  #app-base-inner{min-height:100vh!important;border-radius:0!important}
+  #body-layout{flex-direction:column!important;overflow:auto!important}
+  #sidebar{width:100%!important;display:grid!important;grid-template-columns:1fr 1fr!important;padding:8px!important}
+  #sidebar:before{grid-column:1/-1;padding:5px 8px 3px!important}
+  .nav-btn{min-height:42px!important;font-size:10px!important}
+  #content-area{padding:16px!important}
+  .brand-left{font-size:16px!important}
+  .status-badge{font-size:9px!important}
+}
+
+</style>
+
+<style id="rhm-erny-modern-ui">
+/* RHM ERNY UI refresh — visual layer only */
+:root{
+  --bg-dark:#05070d;--bg-base:#080c14;--sidebar-bg:rgba(7,11,20,.82);
+  --card-bg:rgba(12,17,28,.82);--border-color:rgba(255,255,255,.08);
+  --text-main:#f4f8ff;--text-dim:#8490a6;--theme-accent:#63e6ff;
+}
+body{background:radial-gradient(circle at 50% -10%,rgba(52,93,160,.22),transparent 38%),#05070d!important}
+#fx-canvas{opacity:.35!important}
+#app-base{background:transparent!important;box-shadow:none!important}
+#app-base-inner{border:1px solid rgba(255,255,255,.07)!important;border-radius:22px!important;background:rgba(7,10,17,.78)!important;box-shadow:0 25px 90px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.035)!important;overflow:hidden!important;backdrop-filter:blur(18px)}
+#top-bar{height:72px!important;padding:0 24px!important;background:rgba(10,15,25,.82)!important;border-bottom:1px solid rgba(255,255,255,.07)!important}
+.brand-left{font-size:18px!important;letter-spacing:.14em!important}
+.brand-center{font-size:10px!important;letter-spacing:.18em!important;opacity:.72}
+.status-badge{border-radius:999px!important;padding:8px 12px!important;font-size:9px!important;letter-spacing:.1em!important;background:rgba(99,230,255,.07)!important}
+#sidebar{background:rgba(5,8,15,.68)!important;border-right:1px solid rgba(255,255,255,.07)!important;padding:14px 10px!important;gap:6px!important}
+.nav-btn{border-radius:10px!important;border-left:2px solid transparent!important;color:#8792a7!important;padding:13px 12px!important;font-size:10px!important;letter-spacing:.05em!important}
+.nav-btn:hover{background:rgba(255,255,255,.045)!important;color:#eef8ff!important}
+.nav-btn.active{border-left-color:#63e6ff!important;background:linear-gradient(90deg,rgba(99,230,255,.11),transparent)!important;box-shadow:inset 0 0 25px rgba(99,230,255,.04)!important}
+#content-area{background:transparent!important;padding:28px!important}
+.header-title{font-size:21px!important;letter-spacing:.12em!important;border-bottom:1px solid rgba(255,255,255,.07)!important;padding-bottom:16px!important}
+.card-panel,.payload-card{background:linear-gradient(180deg,rgba(16,22,35,.82),rgba(9,13,22,.82))!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:16px!important;box-shadow:0 18px 50px rgba(0,0,0,.2)!important}
+.btn-primary{border-radius:12px!important;background:linear-gradient(135deg,#63e6ff,#6d5dfc)!important;background-size:100% 100%!important;animation:none!important;color:#031019!important;box-shadow:0 10px 30px rgba(99,230,255,.18)!important}
+.btn-primary:hover{transform:translateY(-2px)!important;box-shadow:0 14px 36px rgba(99,230,255,.28)!important}
+#log-frame{border-radius:14px!important;background:rgba(3,6,11,.72)!important;border:1px solid rgba(255,255,255,.06)!important}
+#log-box{border:none!important;background:transparent!important}
+.rgb-text,.brand-left,.brand-center,.header-title,.orange-subheader,.p-title,.status-badge{
+  background:linear-gradient(90deg,#63e6ff,#9b8cff)!important;background-clip:text!important;-webkit-background-clip:text!important;color:transparent!important;
+}
+.star{color:#63e6ff!important;text-shadow:0 0 10px rgba(99,230,255,.55)!important}
+@media(max-width:850px){
+  #app-base-inner{border-radius:0!important;min-height:100vh!important}
+  #content-area{padding:20px!important}
+}
+</style>
+
+
+<style id="rhm-erny-shadow-dragon-ui">
+/* RHM ERNY SHADOW DRAGON — visual-only skin. Existing JS/functionality untouched. */
+:root{
+  --theme-accent:#c968ff!important;
+  --violet:#b94fff;--violet2:#7226d5;--pink:#ef86ff;
+  --panel:rgba(13,7,21,.78);--panel2:rgba(25,11,37,.72);
+  --text-main:#fcf7ff;--text-dim:#aa9ab7;
+}
+html,body{
+  background:#07030b url("rhm-erny-bg.png") center center/cover fixed no-repeat!important;
+  font-family:Inter,Segoe UI,Arial,sans-serif!important;
+}
+body:before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(circle at 70% 35%,rgba(188,65,255,.17),transparent 30%),
+    linear-gradient(90deg,rgba(4,1,8,.80),rgba(7,2,12,.40),rgba(4,1,8,.78)),
+    linear-gradient(180deg,rgba(4,1,8,.32),rgba(4,1,8,.88));
+}
+body:after{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.16;
+  background-image:linear-gradient(rgba(238,173,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(238,173,255,.06) 1px,transparent 1px);
+  background-size:54px 54px;
+  mask-image:linear-gradient(to bottom,transparent,#000 20%,#000 80%,transparent);
+}
+#fx-canvas{opacity:.08!important;z-index:1!important}
+#lightning-flash{z-index:2!important}
+#app-base{
+  z-index:10!important;margin:18px auto!important;width:calc(100vw - 36px)!important;
+  max-width:1500px!important;min-height:calc(100vh - 36px)!important;
+  padding:1px!important;border-radius:26px!important;background:linear-gradient(135deg,rgba(239,137,255,.48),rgba(111,38,205,.28),rgba(255,255,255,.07))!important;
+  box-shadow:0 30px 100px rgba(0,0,0,.68),0 0 90px rgba(157,54,255,.12)!important;
+}
+#app-base-inner{
+  min-height:calc(100vh - 38px)!important;border-radius:25px!important;
+  background:rgba(7,3,12,.72)!important;border:1px solid rgba(255,255,255,.07)!important;
+  backdrop-filter:blur(17px)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;
+}
+#top-bar{
+  height:78px!important;min-height:78px!important;padding:0 25px!important;
+  background:rgba(10,5,17,.76)!important;border-bottom:1px solid rgba(207,125,255,.12)!important;
+}
+.brand-left{
+  font-size:19px!important;letter-spacing:.17em!important;
+  background:linear-gradient(90deg,#fff,#d8a2ff,#a94dff,#fff)!important;
+  background-size:220% auto!important;animation:shadowText 5s linear infinite!important;
+}
+.brand-center{
+  font-size:9px!important;letter-spacing:.22em!important;opacity:.8!important;
+  background:none!important;-webkit-text-fill-color:#a991b3!important;color:#a991b3!important;animation:none!important;
+}
+.status-badge{
+  font:800 9px Consolas,monospace!important;letter-spacing:.12em!important;
+  color:#e9b8ff!important;-webkit-text-fill-color:#e9b8ff!important;background:rgba(190,76,255,.08)!important;
+  border:1px solid rgba(214,112,255,.2)!important;border-radius:999px!important;padding:8px 11px!important;
+  animation:none!important;
+}
+.star{
+  color:#d77bff!important;-webkit-text-fill-color:#d77bff!important;
+  text-shadow:0 0 11px rgba(211,91,255,.75)!important;animation:none!important;
+}
+#body-layout{position:relative}
+#sidebar{
+  width:225px!important;padding:16px 11px!important;gap:6px!important;
+  background:rgba(6,2,11,.62)!important;border-right:1px solid rgba(211,115,255,.10)!important;
+}
+#sidebar:before{
+  content:"RHM ERNY";display:block;margin:0 10px 14px;padding:10px 12px;
+  border:1px solid rgba(214,115,255,.13);border-radius:12px;background:rgba(187,75,255,.05);
+  color:#cfa8db;font:800 8px Consolas,monospace;letter-spacing:.18em;
+}
+.nav-btn{
+  border:1px solid transparent!important;border-left:2px solid transparent!important;border-radius:12px!important;
+  color:#94839f!important;padding:13px 12px!important;font-size:10px!important;letter-spacing:.04em!important;
+  background:transparent!important;text-align:left!important;
+}
+.nav-btn:hover{
+  color:#f8eaff!important;background:rgba(188,74,255,.07)!important;
+  border-color:rgba(210,112,255,.10)!important;transform:translateX(2px);
+}
+.nav-btn.active{
+  color:#fff!important;border-left-color:#ce6cff!important;
+  background:linear-gradient(90deg,rgba(190,74,255,.16),rgba(190,74,255,.025))!important;
+  border-color:rgba(207,108,255,.12)!important;box-shadow:inset 0 0 25px rgba(183,69,255,.045),0 8px 24px rgba(0,0,0,.16)!important;
+}
+#content-area{padding:27px!important;background:transparent!important}
+.header-title{
+  font-size:19px!important;letter-spacing:.14em!important;padding-bottom:15px!important;margin-bottom:21px!important;
+  border-bottom:1px solid rgba(212,122,255,.11)!important;
+  background:linear-gradient(90deg,#fff,#cf8aff,#fff)!important;background-size:200% auto!important;
+  animation:shadowText 6s linear infinite!important;
+}
+.orange-subheader{
+  font-size:15px!important;color:#f2ddff!important;-webkit-text-fill-color:#f2ddff!important;
+  background:none!important;animation:none!important;
+}
+.card-panel,.payload-card{
+  background:
+    linear-gradient(145deg,rgba(27,12,38,.78),rgba(10,5,17,.72))!important;
+  border:1px solid rgba(213,121,255,.12)!important;border-radius:17px!important;
+  box-shadow:0 18px 55px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.035)!important;
+  backdrop-filter:blur(14px)!important;
+}
+.card-panel:hover,.payload-card:hover{
+  border-color:rgba(214,117,255,.28)!important;
+  box-shadow:0 20px 60px rgba(0,0,0,.36),0 0 28px rgba(169,65,255,.10)!important;
+}
+.btn-primary{
+  border-radius:13px!important;padding:15px 30px!important;
+  background:linear-gradient(135deg,#d27aff,#7c2bd8)!important;background-size:100% 100%!important;
+  animation:none!important;color:#17051e!important;border:1px solid rgba(255,255,255,.18)!important;
+  box-shadow:0 12px 35px rgba(174,68,255,.24),inset 0 1px 0 rgba(255,255,255,.28)!important;
+  text-shadow:none!important;
+}
+.btn-primary:hover{
+  transform:translateY(-2px)!important;
+  box-shadow:0 17px 45px rgba(180,73,255,.34),0 0 24px rgba(222,125,255,.16)!important;
+}
+.payload-grid{gap:16px!important}
+.payload-card{padding:20px!important}
+.p-title{
+  font-size:14px!important;color:#f5eaff!important;-webkit-text-fill-color:#f5eaff!important;
+  background:none!important;animation:none!important;
+}
+.p-fw{color:#ce83ff!important}
+.p-desc{color:#a99ab3!important}
+#log-frame{
+  margin-top:17px!important;padding:1px!important;border-radius:15px!important;
+  background:linear-gradient(135deg,rgba(212,113,255,.18),rgba(255,255,255,.03))!important;
+}
+#log-box{
+  height:105px!important;border:0!important;border-radius:14px!important;
+  background:rgba(5,2,9,.76)!important;color:#dba2ff!important;
+  box-shadow:inset 0 0 30px rgba(170,61,255,.06)!important;padding:13px!important;
+}
+#reboot-modal,#exploit-loading-overlay{background:rgba(4,1,8,.84)!important;backdrop-filter:blur(16px)!important}
+#reboot-modal .card-panel,#exploit-loading-overlay .card-panel{
+  background:linear-gradient(145deg,rgba(28,12,40,.96),rgba(8,3,13,.96))!important;
+  border:1px solid rgba(216,119,255,.2)!important;
+  box-shadow:0 30px 100px rgba(0,0,0,.65),0 0 70px rgba(171,57,255,.12)!important;
+}
+#loading-stage-badge{
+  background:rgba(194,75,255,.09)!important;border-color:rgba(217,119,255,.3)!important;
+  color:#dc91ff!important;
+}
+#loading-progress-bar{
+  background:linear-gradient(90deg,#6c22c8,#b74eff,#f08cff)!important;
+  animation:none!important;box-shadow:0 0 18px rgba(202,91,255,.55)!important;
+}
+#loading-detail-box{background:rgba(4,2,8,.85)!important;border-color:rgba(214,117,255,.11)!important;color:#d996ff!important}
+.rgb-text{
+  background:linear-gradient(90deg,#fff,#d08aff,#9b42f1,#fff)!important;background-size:220% auto!important;
+  -webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important;animation:shadowText 5s linear infinite!important;
+}
+@keyframes shadowText{to{background-position:220% center}}
+@media(max-width:760px){
+  #app-base{margin:8px!important;width:calc(100vw - 16px)!important;min-height:calc(100vh - 16px)!important}
+  #app-base-inner{min-height:calc(100vh - 18px)!important}
+  #top-bar{padding:0 15px!important}
+  #sidebar{width:175px!important}
+  #content-area{padding:19px!important}
+}
+@media(max-width:560px){
+  #top-bar .brand-center{display:none}
+  #sidebar{width:100%!important;display:grid!important;grid-template-columns:1fr 1fr!important;height:auto!important}
+  #sidebar:before{grid-column:1/-1}
+  #body-layout{flex-direction:column}
+  #content-area{min-height:0}
+}
+</style>
+
+</head>
+<body>
+
+<!-- Canvas FX Backdrop Engine -->
+<canvas id="fx-canvas"></canvas>
+<div id="lightning-flash"></div>
+
+<div id="app-base">
+  <div id="app-base-inner">
+
+  <!-- Top Bar -->
+  <div id="top-bar">
+    <div class="brand-left"><span class="star">&#9733;</span> RHM ERNY'S <span class="star">&#9733;</span></div>
+    <div class="brand-center"><span class="star">&#9733;</span> WEBKIT <span class="star">&#9733;</span></div>
+    <div class="status-badge" id="status-badge">[HOST READY]</div>
+  </div>
+
+  <div id="body-layout">
+
+    <!-- Sidebar Navigation -->
+    <div id="sidebar">
+      <button class="nav-btn active" onclick="switchTab('jb')"><span class="star">&#9733;</span> JAILBREAK 13.52 <span class="star">&#9733;</span></button>
+      <button class="nav-btn" onclick="switchTab('payloads')"><span class="star">&#9733;</span> PRIMARY HOMEBREW <span class="star">&#9733;</span></button>
+      <button class="nav-btn" onclick="switchTab('guide')"><span class="star">&#9733;</span> BOOT SEQUENCE <span class="star">&#9733;</span></button>
+      <button class="nav-btn" onclick="switchTab('system')"><span class="star">&#9733;</span> SYSTEM LOGS <span class="star">&#9733;</span></button>
     </div>
-    <div id="spin"></div>
-    <div id="msg">Restart your console</div>
-    <div id="wrap">
-      <div id="state"></div>
-      <div id="out"></div>
+
+    <!-- Content Area -->
+    <div id="content-area">
+
+      <!-- TAB 1: JAILBREAK -->
+      <div id="tab-jb">
+        <div class="header-title"><span class="star">&#9733;</span> WEBKIT EXPLOIT ENGINE <span class="star">&#9733;</span></div>
+        <div class="card-panel" style="text-align: center; padding: 40px 20px;">
+          <div class="orange-subheader" style="font-size: 18px; margin-bottom: 10px; justify-content: center;"><span class="star">&#9733;</span> PS4 FIRMWARE 13.52 KERNEL ESCAPE <span class="star">&#9733;</span></div>
+          <p style="color: var(--text-dim); margin-bottom: 25px;">Executes WebKit memory primitive &rarr; kernel read/write &rarr; 13.52 kpatch chain.</p>
+          <button class="btn-primary" onclick="launchJB()" style="font-size: 18px; padding: 16px 36px; margin: 0 auto;"><span class="star" style="color:#000 !important; text-shadow:none !important;">&#9733;</span> RUN JAILBREAK NOW <span class="star" style="color:#000 !important; text-shadow:none !important;">&#9733;</span></button>
+        </div>
+      </div>
+
+      <!-- TAB 2: PAYLOADS -->
+      <div id="tab-payloads" style="display: none;">
+        <div class="header-title"><span class="star">&#9733;</span> PRIMARY HOMEBREW ENABLERS <span class="star">&#9733;</span></div>
+        <div class="payload-grid">
+
+          <div class="payload-card" onclick="launchJB('ps4debug=1')">
+            <div class="p-title"><span class="star">&#9733;</span> ps4debug [RTM Port :744] <span class="star">&#9733;</span></div>
+            <div class="p-fw">FIRMWARE 13.52</div>
+            <div class="p-desc">Opens :744 port for RHM ERNY BO2 RTM tool connection.</div>
+          </div>
+
+          <div class="payload-card" onclick="launchJB('hen=1')">
+            <div class="p-title"><span class="star">&#9733;</span> HEN Payload <span class="star">&#9733;</span></div>
+            <div class="p-fw">ALL FIRMWARE</div>
+            <div class="p-desc">Standard Homebrew Enabler payload.</div>
+          </div>
+
+          <div class="payload-card" onclick="launchJB()">
+            <div class="p-title"><span class="star">&#9733;</span> GoldHEN 2.4b18 <span class="star">&#9733;</span></div>
+            <div class="p-fw">FIRMWARE 13.52</div>
+            <div class="p-desc">Unsigned .pkg installer, debug settings, plugin loader, keepalive daemon.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TAB 3: BOOT GUIDE -->
+      <div id="tab-guide" style="display: none;">
+        <div class="header-title"><span class="star">&#9733;</span> BOOT SEQUENCE GUIDE <span class="star">&#9733;</span></div>
+        <div class="card-panel" style="line-height: 2.2;">
+          <div><b class="rgb-text">1.</b> Launch PS4 Browser &rarr; Navigate to this host page.</div>
+          <div><b class="rgb-text">2.</b> Click <b><span class="star">&#9733;</span> RUN JAILBREAK NOW <span class="star">&#9733;</span></b>.</div>
+          <div><b style="color: var(--green)">3.</b> Wait for <b>JAILBROKEN</b> banner confirmation.</div>
+          <div><b style="color: var(--green)">4.</b> Select <b><span class="star">&#9733;</span> ps4debug <span class="star">&#9733;</span></b> or <b><span class="star">&#9733;</span> GoldHEN <span class="star">&#9733;</span></b>.</div>
+          <div><b style="color: var(--cyan-blue)">5.</b> Open <b>RHM ERNY BO2 RTM TOOL</b> on PC &rarr; Connect PS4 IP &rarr; Attach BO2!</div>
+        </div>
+      </div>
+
+      <!-- TAB 4: SYSTEM LOGS -->
+      <div id="tab-system" style="display: none;">
+        <div class="header-title"><span class="star">&#9733;</span> SYSTEM LOGS <span class="star">&#9733;</span></div>
+        <p style="color: var(--text-dim);">Live exploit and HTTP server telemetry stream.</p>
+      </div>
+
+      <!-- Green System Log Box -->
+      <div id="log-frame">
+        <div id="log-box">[05:37:15] RHM ERNY JAILBREAK TOOL READY...</div>
+      </div>
+
+      <!-- Automated Reboot Modal & Status Overlay -->
+      <div id="reboot-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center; backdrop-filter:blur(5px);">
+        <div class="card-panel rgb-border" style="width: 460px; text-align: center; padding: 30px; background:#151515;">
+          <div class="orange-subheader" style="justify-content: center; font-size: 18px; margin-bottom: 12px;">
+            <span class="star">&#9733;</span> OPERATION COMPLETED SUCCESSFULLY <span class="star">&#9733;</span>
+          </div>
+          <p style="color: var(--text-main); font-size: 14px; margin-bottom: 20px;">
+            Console payload deployment verified. Automatic reboot sequence initiated to clear memory state.
+          </p>
+          <div id="reboot-timer-display" class="rgb-text" style="font-size: 48px; font-weight: 900; margin-bottom: 20px; font-family: Consolas, monospace;">
+            10
+          </div>
+          <div style="display: flex; gap: 15px; justify-content: center;">
+            <button class="btn-primary" onclick="triggerManualReboot()" style="flex: 1; padding: 12px; font-size: 14px;"><span class="emoji">⚡</span> REBOOT NOW</button>
+            <button class="btn-primary" onclick="cancelAutoReboot()" style="flex: 1; padding: 12px; font-size: 14px; background:#444 !important; color:#fff !important; box-shadow:none !important;">✖ CANCEL</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Multi-Stage Exploit Progress & Loading System Overlay -->
+      <div id="exploit-loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(7,7,12,0.94); z-index:999999; backdrop-filter:blur(8px); align-items:center; justify-content:center; flex-direction:column; padding:20px; user-select:none;">
+        <div class="card-panel rgb-border" style="width:580px; max-width:calc(100vw - 32px); padding:36px; background:#0e0e17; text-align:center; border-radius:16px; box-shadow: 0 0 50px var(--rgb-shadow);">
+          
+          <div id="loading-stage-badge" style="display:inline-block; padding:4px 14px; border-radius:20px; background:rgba(255,102,0,0.15); border:1px solid var(--rgb-color); color:var(--rgb-color); font-family:Consolas, monospace; font-size:12px; font-weight:800; margin-bottom:12px; letter-spacing:1px;">
+            [STAGE 1/6] INITIALIZING EXPLOIT CHAIN
+          </div>
+          
+          <div id="loading-title" style="font-family:'Arial Black', Impact, sans-serif; font-size:24px; font-weight:900; font-style:italic; color:#fff; margin-bottom:6px; letter-spacing:1px;">
+            EXECUTING WEBKIT PRIMITIVE...
+          </div>
+          
+          <div id="loading-subtext" style="color:#aaa; font-size:13px; font-family:Consolas, monospace; margin-bottom:24px;">
+            Preparing memory layout & spray buffers
+          </div>
+          
+          <div style="width:100%; height:20px; background:#1A1A1A; border:1px solid #333; border-radius:10px; overflow:hidden; position:relative; margin-bottom:12px; padding:2px;">
+            <div id="loading-progress-bar" style="width:5%; height:100%; border-radius:8px; background:linear-gradient(90deg, #ff0055, #ff7700, #ffea00, #00ff88, #00d4ff); background-size:300% 300%; animation:rainbowShift 3s linear infinite; transition:width 0.25s ease-out; box-shadow:0 0 15px var(--rgb-color);"></div>
+          </div>
+          
+          <div style="display:flex; justify-content:space-between; font-family:Consolas, monospace; font-size:13px; font-weight:700; color:#fff; margin-bottom:20px;">
+            <span id="loading-pct-text" style="color:var(--rgb-color);">05%</span>
+            <span id="loading-timer-text" style="color:#888;">ELAPSED: 00.0s</span>
+          </div>
+          
+          <div id="loading-detail-box" style="background:#050508; border:1px solid #222; border-radius:8px; padding:10px 14px; font-family:Consolas, monospace; font-size:11px; color:var(--green); text-align:left; height:48px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">
+            &gt; Initializing WebKit exploit pipeline...
+          </div>
+          
+          <div id="loading-error-actions" style="display:none; margin-top:20px; gap:12px; justify-content:center;">
+            <button class="btn-primary" onclick="retryJailbreakNow()" style="flex:1; padding:12px; font-size:14px;"><span class="emoji">⚡</span> RETRY JAILBREAK</button>
+            <button class="btn-primary" onclick="triggerManualReboot()" style="flex:1; padding:12px; font-size:14px; background:#ff0055 !important; color:#fff !important; box-shadow:none !important;"><span class="emoji">🔄</span> COLD REBOOT PS4</button>
+          </div>
+
+        </div>
+      </div>
+
     </div>
-    <script type="module">
-      import "./jb.js?v=19";
-    </script>
-  </body>
+
+  </div>
+</div>
+
+<!-- Top Right Floating Live Visitor & View Counter Widget -->
+
+<script>
+var currentTheme = localStorage.getItem('zoof_active_theme') || 'lightning';
+var animFrameId = null;
+
+function toggleThemeMenu() {
+  var menu = document.getElementById('theme-menu');
+  if (menu) menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+}
+
+document.addEventListener('click', function(e) {
+  var container = document.getElementById('theme-selector-container');
+  if (container && !container.contains(e.target)) {
+    var menu = document.getElementById('theme-menu');
+    if (menu) menu.style.display = 'none';
+  }
+});
+
+function setTheme(themeName, saveToStorage) {
+  if (saveToStorage !== false) {
+    localStorage.setItem('zoof_active_theme', themeName);
+  }
+  currentTheme = themeName;
+  var menu = document.getElementById('theme-menu');
+  if (menu) menu.style.display = 'none';
+
+  document.body.className = '';
+  if (themeName === 'lightning') document.body.classList.add('theme-lightning-mode');
+  if (themeName === 'acid') document.body.classList.add('theme-acid-mode');
+  if (themeName === 'gold') document.body.classList.add('theme-gold-mode');
+
+  var accentMap = {
+    rgb: '#00d4ff',
+    lightning: '#00f0ff',
+    acid: '#00ff66',
+    gold: '#ffea00'
+  };
+  document.documentElement.style.setProperty('--theme-accent', accentMap[themeName] || '#00d4ff');
+
+  startCanvasEngine(themeName);
+}
+
+// Live real-time cross-tab theme synchronization
+window.addEventListener('storage', function(e) {
+  if (e.key === 'zoof_active_theme' && e.newValue) {
+    setTheme(e.newValue, false);
+  }
+});
+
+function startCanvasEngine(themeName) {
+  if (animFrameId) cancelAnimationFrame(animFrameId);
+  var canvas = document.getElementById('fx-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.removeEventListener('resize', resize);
+  window.addEventListener('resize', resize);
+  runStarfieldEngine(canvas, ctx);
+}
+
+/* 1. Interactive 90-Star HTML5 Canvas Starfield Engine */
+function runStarfieldEngine(canvas, ctx) {
+  var stars = [];
+  for (var i = 0; i < 90; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 2.2 + 0.6,
+      alpha: Math.random(),
+      speed: Math.random() * 0.025 + 0.005,
+      dx: (Math.random() - 0.5) * 0.35,
+      dy: (Math.random() - 0.5) * 0.35
+    });
+  }
+
+  function render() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      s.alpha += s.speed;
+      if (s.alpha > 1 || s.alpha < 0) s.speed = -s.speed;
+      s.x += s.dx; s.y += s.dy;
+      if (s.x < 0) s.x = canvas.width;
+      if (s.x > canvas.width) s.x = 0;
+      if (s.y < 0) s.y = canvas.height;
+      if (s.y > canvas.height) s.y = 0;
+
+      ctx.fillStyle = 'rgba(255, 255, 255, ' + Math.abs(s.alpha) + ')';
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2); ctx.fill();
+    }
+    animFrameId = requestAnimationFrame(render);
+  }
+  render();
+}
+
+/* 2. Lightning Storm Rain Engine (Silky 60 FPS) */
+function runLightningRainEngine(canvas, ctx) {
+  var drops = [];
+  var dropCount = 65;
+  var flashEl = document.getElementById('lightning-flash');
+
+  for (var i = 0; i < dropCount; i++) {
+    drops.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      len: Math.random() * 25 + 10,
+      speed: Math.random() * 14 + 10,
+      color: Math.random() > 0.4 ? 'rgba(0, 240, 255, ' : 'rgba(168, 85, 247, '
+    });
+  }
+
+  function triggerLightningStrike() {
+    if (!flashEl) return;
+    flashEl.style.opacity = '0.9';
+    setTimeout(function() { flashEl.style.opacity = '0'; }, 60);
+    setTimeout(function() { flashEl.style.opacity = '0.6'; }, 120);
+    setTimeout(function() { flashEl.style.opacity = '0'; }, 200);
+
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    var sx = Math.random() * canvas.width;
+    var sy = 0;
+    ctx.moveTo(sx, sy);
+    for (var b = 0; b < 6; b++) {
+      sx += (Math.random() - 0.5) * 80;
+      sy += canvas.height / 6;
+      ctx.lineTo(sx, sy);
+    }
+    ctx.stroke();
+  }
+
+  setInterval(function() {
+    if (currentTheme === 'lightning' && Math.random() > 0.4) {
+      triggerLightningStrike();
+    }
+  }, 2800);
+
+  function render() {
+    ctx.fillStyle = 'rgba(7, 7, 12, 0.25)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    for (var i = 0; i < drops.length; i++) {
+      var d = drops[i];
+      d.y += d.speed;
+      if (d.y > canvas.height) {
+        d.y = -d.len;
+        d.x = Math.random() * canvas.width;
+      }
+
+      ctx.strokeStyle = d.color + (Math.random() * 0.5 + 0.5) + ')';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(d.x, d.y);
+      ctx.lineTo(d.x - 2, d.y + d.len);
+      ctx.stroke();
+    }
+    animFrameId = requestAnimationFrame(render);
+  }
+  render();
+}
+
+/* 3. Acid Rain Matrix Engine (Silky 60 FPS) */
+function runAcidRainEngine(canvas, ctx) {
+  var chars = '0123456789ABCDEF⚡★';
+  var fontSize = 14;
+  var columns = Math.floor(canvas.width / fontSize);
+  var rainDrops = [];
+  for (var x = 0; x < columns; x++) rainDrops[x] = 1;
+
+  function render() {
+    ctx.fillStyle = 'rgba(2, 11, 5, 0.18)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00ff66';
+    ctx.font = fontSize + 'px monospace';
+
+    for (var i = 0; i < rainDrops.length; i++) {
+      var text = chars.charAt(Math.floor(Math.random() * chars.length));
+      ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+      if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        rainDrops[i] = 0;
+      }
+      rainDrops[i]++;
+    }
+    animFrameId = requestAnimationFrame(render);
+  }
+  render();
+}
+
+/* 4. GoldHEN Embers Engine (Silky 60 FPS) */
+function runGoldEmbersEngine(canvas, ctx) {
+  var embers = [];
+  for (var i = 0; i < 45; i++) {
+    embers.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 3 + 1,
+      speedY: -(Math.random() * 1.5 + 0.5),
+      speedX: (Math.random() - 0.5) * 0.8,
+      alpha: Math.random()
+    });
+  }
+
+  function render() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (var i = 0; i < embers.length; i++) {
+      var e = embers[i];
+      e.y += e.speedY; e.x += e.speedX;
+      if (e.y < 0) { e.y = canvas.height; e.x = Math.random() * canvas.width; }
+
+      ctx.fillStyle = 'rgba(255, 234, 0, ' + e.alpha + ')';
+      ctx.beginPath(); ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2); ctx.fill();
+    }
+    animFrameId = requestAnimationFrame(render);
+  }
+  render();
+}
+
+// Initialize selected theme engine on startup
+setTheme(currentTheme);
+</script>
+
+<!-- Master RGB Engine Script -->
+<script>
+
+(function startRGBEngine() {
+  var hue = 0;
+  setInterval(function() {
+    hue = (hue + 2) % 360;
+    var h = hue / 60;
+    var x = 1 - Math.abs((h % 2) - 1);
+    var r = 0, g = 0, b = 0;
+    if (h < 1) { r = 1; g = x; b = 0; }
+    else if (h < 2) { r = x; g = 1; b = 0; }
+    else if (h < 3) { r = 0; g = 1; b = x; }
+    else if (h < 4) { r = 0; g = x; b = 1; }
+    else if (h < 5) { r = x; g = 0; b = 1; }
+    else { r = 1; g = 0; b = x; }
+    
+    var hexR = Math.round(r * 255).toString(16).padStart(2, '0');
+    var hexG = Math.round(g * 255).toString(16).padStart(2, '0');
+    var hexB = Math.round(b * 255).toString(16).padStart(2, '0');
+    var color = '#' + hexR + hexG + hexB;
+    var shadow = 'rgba(' + Math.round(r*255) + ',' + Math.round(g*255) + ',' + Math.round(b*255) + ', 0.5)';
+
+    document.documentElement.style.setProperty('--rgb-color', color);
+    document.documentElement.style.setProperty('--rgb-shadow', shadow);
+  }, 120);
+})();
+
+function switchTab(tabId) {
+  var tabs = ['jb', 'payloads', 'guide', 'system'];
+  tabs.forEach(function(t) {
+    document.getElementById('tab-' + t).style.display = (t === tabId) ? 'block' : 'none';
+  });
+  
+  var btns = document.querySelectorAll('.nav-btn');
+  btns.forEach(function(btn) {
+    btn.classList.remove('active');
+    if (btn.getAttribute('onclick').indexOf(tabId) !== -1) {
+      btn.classList.add('active');
+    }
+  });
+}
+
+var timerInterval = null;
+var startTime = 0;
+
+function launchJB(query) {
+  logMsg("Initiating WebKit Exploit Engine...");
+  
+  var overlay = document.getElementById('exploit-loading-overlay');
+  if (overlay) overlay.style.display = 'flex';
+  
+  var errActions = document.getElementById('loading-error-actions');
+  if (errActions) errActions.style.display = 'none';
+
+  startTime = Date.now();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(function() {
+    var elapsedSec = ((Date.now() - startTime) / 1000).toFixed(1);
+    var timerEl = document.getElementById('loading-timer-text');
+    if (timerEl) timerEl.textContent = "ELAPSED: " + (elapsedSec < 10 ? "0" + elapsedSec : elapsedSec) + "s";
+  }, 100);
+
+  reportExploitProgress(1, "INITIALIZING EXPLOIT CHAIN", 10, "Allocating WebKit spray buffers...");
+
+  var target = "./run.html" + (query ? "?" + query : "");
+  setTimeout(function() {
+    window.location.href = target;
+  }, 350);
+}
+
+function reportExploitProgress(stage, name, pct, detail) {
+  var overlay = document.getElementById('exploit-loading-overlay');
+  if (overlay && overlay.style.display !== 'flex') overlay.style.display = 'flex';
+
+  var stageEl = document.getElementById('loading-stage-badge');
+  var titleEl = document.getElementById('loading-title');
+  var barEl = document.getElementById('loading-progress-bar');
+  var pctEl = document.getElementById('loading-pct-text');
+  var detailEl = document.getElementById('loading-detail-box');
+
+  if (stageEl) stageEl.textContent = "[STAGE " + stage + "/6] " + name;
+  if (titleEl) titleEl.textContent = name;
+  if (barEl) barEl.style.width = Math.min(100, Math.max(5, pct)) + "%";
+  if (pctEl) pctEl.textContent = (pct < 10 ? "0" + pct : pct) + "%";
+  if (detailEl && detail) detailEl.textContent = "> " + detail;
+  logMsg("[" + stage + "/6] " + name + ": " + (detail || "OK"));
+}
+
+window.reportExploitProgress = reportExploitProgress;
+
+function retryJailbreakNow() {
+  if (timerInterval) clearInterval(timerInterval);
+  var overlay = document.getElementById('exploit-loading-overlay');
+  if (overlay) overlay.style.display = 'none';
+  launchJB();
+}
+
+function showExploitError(errMsg) {
+  if (timerInterval) clearInterval(timerInterval);
+  var stageEl = document.getElementById('loading-stage-badge');
+  var titleEl = document.getElementById('loading-title');
+  var subEl = document.getElementById('loading-subtext');
+  var barEl = document.getElementById('loading-progress-bar');
+  var detailEl = document.getElementById('loading-detail-box');
+  var errActions = document.getElementById('loading-error-actions');
+
+  if (stageEl) {
+    stageEl.textContent = "✖ EXPLOIT FAILED";
+    stageEl.style.borderColor = "#ff0055";
+    stageEl.style.color = "#ff0055";
+    stageEl.style.background = "rgba(255,0,85,0.15)";
+  }
+  if (titleEl) {
+    titleEl.textContent = "FAILED — COLD REBOOT PS4 AND RETRY";
+    titleEl.style.color = "#ff0055";
+  }
+  if (subEl) subEl.textContent = "Memory allocation or kernel primitive check failed";
+  if (barEl) {
+    barEl.style.width = "100%";
+    barEl.style.background = "#ff0055";
+    barEl.style.boxShadow = "0 0 20px #ff0055";
+  }
+  if (detailEl) detailEl.textContent = "ERR: " + (errMsg || "Kernel panic / reclaim miss detected. Reboot required.");
+  if (errActions) errActions.style.display = 'flex';
+  logMsg("✖ EXPLOIT ERROR: " + errMsg);
+}
+
+window.showExploitError = showExploitError;
+
+function logMsg(msg) {
+  var box = document.getElementById('log-box');
+  var d = new Date();
+  var ts = d.toTimeString().split(' ')[0];
+  box.innerHTML += "\n[" + ts + "] " + msg;
+  box.scrollTop = box.scrollHeight;
+}
+
+var rebootTimer = null;
+var rebootCountdownSec = 10;
+
+window.onZoofComplete = function(status) {
+  if (status && status.success) {
+    document.getElementById('status-badge').textContent = '[COMPLETED - GOLDHEN / PAYLOAD ACTIVE]';
+    logMsg("[+] VERIFIED SUCCESS: Payload deployed. Preparing automatic browser auto-close sequence...");
+
+    // Hide exploit loading overlay if visible
+    var loadingOverlay = document.getElementById('exploit-loading-overlay');
+    if (loadingOverlay) loadingOverlay.style.display = 'none';
+
+    // Auto close browser after GoldHEN injection
+    setTimeout(function() {
+      logMsg("⚡ AUTO-CLOSING PS4 WEBKIT BROWSER...");
+      try { window.close(); } catch(e) {}
+      try { history.back(); } catch(e) {}
+      try { location.href = "about:blank"; } catch(e) {}
+    }, 1500);
+
+    // Show reboot modal option
+    var modal = document.getElementById('reboot-modal');
+    if (modal) modal.style.display = 'flex';
+    
+    rebootCountdownSec = 10;
+    var timerEl = document.getElementById('reboot-timer-display');
+    if (timerEl) timerEl.textContent = rebootCountdownSec;
+    
+    if (rebootTimer) clearInterval(rebootTimer);
+    rebootTimer = setInterval(function() {
+      rebootCountdownSec--;
+      if (timerEl) timerEl.textContent = rebootCountdownSec;
+      if (rebootCountdownSec <= 0) {
+        clearInterval(rebootTimer);
+        triggerManualReboot();
+      }
+    }, 1000);
+  }
+};
+
+function triggerManualReboot() {
+  if (rebootTimer) clearInterval(rebootTimer);
+  logMsg("[+] REBOOT INITIATED: Executing sys_reboot syscall 37...");
+  if (typeof window.__zoof_reboot === "function") {
+    var ok = window.__zoof_reboot();
+    if (!ok) {
+      logMsg("✖ REBOOT FAILED: Kernel interface rejected call.");
+    }
+  } else if (typeof sc === "function") {
+    try {
+      sc(37, 0);
+      logMsg("[+] REBOOT SYSCALL SENT.");
+    } catch(e) {
+      logMsg("✖ REBOOT FAILED: " + e.message);
+    }
+  } else {
+    logMsg("✖ REBOOT UNAVAILABLE: Kernel reboot interface not armed.");
+  }
+}
+
+function cancelAutoReboot() {
+  if (rebootTimer) clearInterval(rebootTimer);
+  var modal = document.getElementById('reboot-modal');
+  if (modal) modal.style.display = 'none';
+  logMsg("⚠ REBOOT CANCELLED by user. Console session remains active.");
+  document.getElementById('status-badge').textContent = '[JAILBROKEN - HOST ACTIVE]';
+}
+</script>
+</body>
 </html>
+
+<style id="rhm-erny-complete-redesign">
+/* RHM ERNY — COMPLETE INTERFACE REDESIGN
+   Visual layer only. Existing HTML IDs, buttons, onclick handlers and scripts are preserved. */
+:root{
+  --re-bg:#07030c;
+  --re-panel:rgba(12,8,19,.88);
+  --re-panel2:rgba(20,12,30,.82);
+  --re-line:rgba(219,164,255,.14);
+  --re-accent:#c66cff;
+  --re-accent2:#8c3be5;
+  --re-text:#fbf8ff;
+  --re-muted:#9e91aa;
+  --re-green:#9fffcf;
+}
+html,body{
+  background:#050208 url('rhm-erny-bg.png') center/cover fixed no-repeat!important;
+  color:var(--re-text)!important;
+  font-family:Inter,Segoe UI,system-ui,sans-serif!important;
+}
+body:before{
+  z-index:0!important;content:""!important;position:fixed!important;inset:0!important;
+  background:
+    linear-gradient(90deg,rgba(3,1,7,.90) 0%,rgba(5,2,10,.60) 48%,rgba(3,1,7,.88) 100%),
+    linear-gradient(180deg,rgba(4,1,8,.35),rgba(4,1,8,.86))!important;
+}
+body:after{display:none!important}
+#fx-canvas{opacity:.025!important}
+#lightning-flash{display:none!important}
+
+#app-base{
+  width:min(1540px,calc(100vw - 42px))!important;
+  min-height:calc(100vh - 42px)!important;
+  margin:21px auto!important;
+  padding:0!important;
+  border:1px solid rgba(229,191,255,.16)!important;
+  border-radius:22px!important;
+  background:rgba(7,3,12,.78)!important;
+  box-shadow:0 35px 120px rgba(0,0,0,.72),0 0 80px rgba(137,47,211,.12)!important;
+  overflow:hidden!important;
+}
+#app-base-inner{
+  min-height:calc(100vh - 42px)!important;
+  border:0!important;border-radius:0!important;
+  background:rgba(7,3,12,.68)!important;
+  backdrop-filter:blur(18px)!important;
+}
+
+/* Header becomes a clean command bar */
+#top-bar{
+  height:72px!important;min-height:72px!important;
+  padding:0 22px!important;
+  background:rgba(9,5,15,.91)!important;
+  border-bottom:1px solid var(--re-line)!important;
+}
+.brand-left,.brand-center,.status-badge{
+  background:none!important;animation:none!important;
+  -webkit-text-fill-color:initial!important;
+}
+.brand-left{
+  display:flex!important;align-items:center!important;gap:9px!important;
+  color:#fff!important;font-size:18px!important;font-weight:900!important;
+  letter-spacing:.13em!important;
+}
+.brand-left:before{
+  content:"RE";display:grid;place-items:center;width:34px;height:34px;
+  border-radius:10px;background:linear-gradient(145deg,#d58aff,#7628d1);
+  color:#16051e;font-size:11px;font-weight:950;letter-spacing:0;
+  box-shadow:0 8px 24px rgba(177,72,255,.25),inset 0 1px rgba(255,255,255,.4);
+}
+.brand-left .star{display:none!important}
+.brand-center{
+  position:absolute!important;left:50%;transform:translateX(-50%);
+  color:#887991!important;font:800 9px Consolas,monospace!important;
+  letter-spacing:.25em!important;
+}
+.brand-center .star{display:none!important}
+.status-badge{
+  color:#c9ffea!important;-webkit-text-fill-color:#c9ffea!important;
+  background:rgba(93,255,184,.055)!important;
+  border:1px solid rgba(120,255,200,.18)!important;
+  border-radius:999px!important;padding:7px 11px!important;
+  font:800 9px Consolas,monospace!important;letter-spacing:.1em!important;
+}
+
+#body-layout{min-height:0!important}
+/* Sidebar becomes a compact vertical control rail */
+#sidebar{
+  width:214px!important;padding:17px 12px!important;gap:7px!important;
+  background:rgba(7,3,12,.82)!important;
+  border-right:1px solid var(--re-line)!important;
+}
+#sidebar:before{
+  content:"CONTROL CENTER"!important;
+  display:block!important;margin:0 8px 8px!important;padding:8px 10px!important;
+  color:#77677f!important;font:800 8px Consolas,monospace!important;
+  letter-spacing:.2em!important;border:0!important;background:none!important;
+}
+.nav-btn{
+  min-height:46px!important;padding:11px 12px!important;
+  border:1px solid transparent!important;border-left:2px solid transparent!important;
+  border-radius:10px!important;background:transparent!important;
+  color:#988ba1!important;font-size:10px!important;font-weight:800!important;
+  letter-spacing:.045em!important;transition:.18s ease!important;
+}
+.nav-btn .star{display:none!important}
+.nav-btn:before{content:"";display:inline-block;width:7px;height:7px;margin-right:10px;border-radius:2px;background:#51455a;vertical-align:1px;transition:.18s}
+.nav-btn:hover{background:rgba(190,91,255,.055)!important;color:#f5eaff!important;border-color:rgba(213,142,255,.08)!important;transform:none!important}
+.nav-btn:hover:before{background:#b85cff;box-shadow:0 0 10px #b85cff}
+.nav-btn.active{
+  background:linear-gradient(90deg,rgba(189,88,255,.14),rgba(189,88,255,.025))!important;
+  color:#fff!important;border-color:rgba(205,119,255,.12)!important;
+  border-left:2px solid #c66cff!important;
+  box-shadow:inset 0 0 20px rgba(181,73,255,.045)!important;
+}
+.nav-btn.active:before{background:#d27bff;box-shadow:0 0 12px rgba(210,123,255,.8)}
+
+#content-area{
+  min-width:0!important;padding:25px 27px 21px!important;
+  background:transparent!important;
+}
+.header-title{
+  display:flex!important;align-items:center!important;
+  min-height:38px!important;margin-bottom:17px!important;padding:0 0 13px!important;
+  border-bottom:1px solid rgba(255,255,255,.075)!important;
+  background:none!important;animation:none!important;
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+  font-size:17px!important;font-style:normal!important;font-weight:850!important;
+  letter-spacing:.105em!important;
+}
+.header-title .star{display:none!important}
+.header-title:before{
+  content:"";width:4px;height:22px;margin-right:11px;border-radius:8px;
+  background:linear-gradient(#d58bff,#8433d9);box-shadow:0 0 16px rgba(199,94,255,.45);
+}
+.orange-subheader{
+  color:#eee7f2!important;-webkit-text-fill-color:#eee7f2!important;
+  background:none!important;animation:none!important;font-size:14px!important;
+}
+.orange-subheader .star{display:none!important}
+
+/* Hero / panels */
+.card-panel,.payload-card{
+  background:linear-gradient(145deg,rgba(24,14,33,.88),rgba(10,6,16,.91))!important;
+  border:1px solid rgba(224,181,255,.105)!important;
+  border-radius:15px!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.27),inset 0 1px rgba(255,255,255,.035)!important;
+  backdrop-filter:blur(13px)!important;
+}
+.card-panel{padding:23px!important}
+.payload-grid{gap:13px!important}
+.payload-card{padding:18px!important}
+.payload-card:hover{transform:translateY(-2px)!important;border-color:rgba(202,111,255,.30)!important;box-shadow:0 20px 55px rgba(0,0,0,.35),0 0 25px rgba(173,66,255,.08)!important}
+.p-title{background:none!important;animation:none!important;color:#f5edfa!important;-webkit-text-fill-color:#f5edfa!important;font-size:13px!important}
+.p-title .star{display:none!important}
+.p-fw{color:#c987ff!important;font-size:9px!important;letter-spacing:.12em!important}
+.p-desc{color:#9f93a9!important;line-height:1.55!important}
+
+.btn-primary{
+  background:linear-gradient(135deg,#d185ff,#8536d8)!important;
+  background-size:100% 100%!important;animation:none!important;
+  color:#17051e!important;-webkit-text-fill-color:#17051e!important;
+  border:1px solid rgba(255,255,255,.22)!important;border-radius:11px!important;
+  box-shadow:0 12px 32px rgba(151,55,220,.25),inset 0 1px rgba(255,255,255,.35)!important;
+  font-size:12px!important;letter-spacing:.09em!important;
+}
+.btn-primary:hover{transform:translateY(-2px)!important;box-shadow:0 16px 42px rgba(162,62,236,.32)!important}
+
+#log-frame{margin-top:14px!important;padding:1px!important;border-radius:13px!important;background:rgba(209,139,255,.08)!important}
+#log-box{
+  height:92px!important;border:0!important;border-radius:12px!important;
+  background:rgba(4,2,8,.78)!important;color:#c7b7d0!important;
+  box-shadow:none!important;font-size:11px!important;padding:12px!important;
+}
+
+/* Guide text and miscellaneous inline content */
+#tab-guide .card-panel div{color:#c2b6ca!important}
+#tab-guide b{color:#f7effb!important}
+.rgb-text{background:none!important;animation:none!important;-webkit-text-fill-color:#c98aff!important;color:#c98aff!important}
+
+/* Modal / loader — same design language */
+#reboot-modal,#exploit-loading-overlay{background:rgba(3,1,7,.82)!important;backdrop-filter:blur(18px)!important}
+#reboot-modal .card-panel,#exploit-loading-overlay .card-panel{
+  background:linear-gradient(145deg,rgba(26,13,37,.97),rgba(7,3,12,.97))!important;
+  border:1px solid rgba(215,132,255,.18)!important;border-radius:18px!important;
+  box-shadow:0 30px 110px rgba(0,0,0,.7),0 0 60px rgba(173,64,255,.12)!important;
+}
+#loading-stage-badge{background:rgba(192,88,255,.08)!important;border-color:rgba(210,126,255,.25)!important;color:#d99aff!important}
+#loading-progress-bar{background:linear-gradient(90deg,#7d2bd4,#bd63ff,#e19cff)!important;animation:none!important;box-shadow:0 0 17px rgba(201,95,255,.45)!important}
+#loading-detail-box{background:rgba(3,1,7,.7)!important;border-color:rgba(211,131,255,.1)!important;color:#d5a0ee!important}
+
+@media(max-width:850px){
+  #app-base{width:100vw!important;min-height:100vh!important;margin:0!important;border-radius:0!important}
+  #app-base-inner{min-height:100vh!important}
+}
+@media(max-width:650px){
+  #top-bar{padding:0 14px!important}
+  .brand-center{display:none!important}
+  #sidebar{width:168px!important}
+  #content-area{padding:18px!important}
+}
+@media(max-width:520px){
+  #body-layout{flex-direction:column!important;overflow:auto!important}
+  #sidebar{width:100%!important;display:grid!important;grid-template-columns:1fr 1fr!important;padding:10px!important;border-right:0!important;border-bottom:1px solid var(--re-line)!important}
+  #sidebar:before{grid-column:1/-1;margin:0!important}
+  #content-area{overflow:visible!important}
+}
+</style>
