@@ -51,27 +51,18 @@ body{display:flex;align-items:center;justify-content:center}
 </script>
 <script type="module">
 (async function () {
-  const files = [
-    ["jb.js", "JB ENGINE"],
-    ["core.js", "CORE"],
-    ["mem.js", "MEMORY"],
-    ["int64.js", "INT64"],
-    ["ps4_offsets.js", "OFFSETS 13.52"],
-    ["patches/1352.bin", "PATCH 13.52"],
-    ["goldhen.bin", "GOLDHEN"]
-  ];
   try {
-    for (const [path, label] of files) {
-      const r = await fetch(path, { cache: "no-store" });
-      if (!r.ok) throw new Error(label + " introuvable (HTTP " + r.status + ") : " + path);
-      const b = await r.arrayBuffer();
-      if (!b.byteLength) throw new Error(label + " vide : " + path);
-      if (typeof append === "function") append("OK: " + label + " — " + b.byteLength + " octets", "ok");
-    }
-    if (typeof append === "function") append("Tous les fichiers 13.52 sont accessibles depuis GitHub Pages.", "ok");
+    if (typeof append === "function")
+      append("Starting optimized 13.52 engine…", "ok");
+
+    // Do not sequentially fetch the entire dependency tree here.
+    // jb.js imports core/mem/int64/offsets itself. Removing the
+    // 7-file no-store preflight avoids several round trips before
+    // the exploit can even start.
     await import("./jb.js?fw=1352");
   } catch (e) {
-    if (typeof showExploitError === "function") showExploitError(e && e.message ? e.message : String(e));
+    if (typeof showExploitError === "function")
+      showExploitError(e && e.message ? e.message : String(e));
   }
 })();
 </script>

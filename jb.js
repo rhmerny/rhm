@@ -3150,7 +3150,7 @@ let allDone = false,
             // ?ps4debug=0 in the URL.
             if (payloadRunning && params.get("ps4debug") !== "0") {
               try {
-                const r = await fetch("ps4debug.bin", { cache: "reload" });
+                const r = await fetch("ps4debug.bin");
                 if (!r.ok) throw new Error("HTTP " + r.status);
                 const blob = new Uint8Array(await r.arrayBuffer());
                 if (blob.length === 0) throw new Error("empty payload");
